@@ -1,58 +1,89 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Bureau d'Ordre — Login (Blade + Vite + Tailwind)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Fichiers front-end **prêts à intégrer** dans votre projet Laravel existant.
+Aucune logique d'authentification n'est incluse — uniquement l'interface,
+structurée pour brancher votre contrôleur plus tard sans toucher au markup.
 
-## About Laravel
+## Où placer chaque fichier
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Copiez ces fichiers dans votre projet Laravel en respectant les chemins
+(ils correspondent déjà à la structure standard Laravel) :
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```
+votre-projet-laravel/
+├── resources/
+│   ├── css/
+│   │   └── app.css                        ← remplace ou fusionne avec l'existant
+│   ├── js/
+│   │   └── app.js                         ← remplace ou fusionne avec l'existant
+│   └── views/
+│       ├── layouts/
+│       │   └── guest.blade.php            ← nouveau
+│       ├── partials/
+│       │   ├── background-scene.blade.php ← nouveau
+│       │   ├── top-bar.blade.php          ← nouveau
+│       │   └── footer.blade.php           ← nouveau
+│       └── auth/
+│           └── login.blade.php            ← nouveau
+├── tailwind.config.js                     ← remplace ou fusionne avec l'existant
+├── postcss.config.js                      ← remplace ou fusionne avec l'existant
+└── vite.config.js                         ← remplace ou fusionne avec l'existant
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+⚠️ Si votre projet a déjà un `tailwind.config.js` / `vite.config.js` /
+`resources/js/app.js`, **ne les écrasez pas aveuglément** — fusionnez le
+contenu (gardez vos couleurs/plugins existants et ajoutez les nôtres).
 
-## Contributing
+## Dépendances npm à installer
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+npm install -D tailwindcss@3.4.4 postcss autoprefixer laravel-vite-plugin
+```
 
-## Code of Conduct
+(`laravel-vite-plugin` est presque toujours déjà présent dans un projet
+Laravel avec Vite — vérifiez `package.json` avant de le réinstaller.)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Images
 
-## Security Vulnerabilities
+Placez vos 3 images dans `public/assets/` :
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```
+public/assets/logo-bureau-ordre.png
+public/assets/armoiries-royaume.png
+public/assets/commune-jerada.jpg
+```
 
-## License
+Les vues utilisent `asset('assets/...')`, qui pointe automatiquement vers
+`public/`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Route (à ajouter vous-même quand vous voudrez tester la vue)
+
+Dans `routes/web.php`, ajoutez temporairement une route d'affichage
+(aucune logique, juste pour visualiser la page) :
+
+```php
+Route::view('/login', 'auth.login');
+```
+
+Le formulaire poste déjà vers `POST /login` (`action="{{ url('/login') }}"`)
+et inclut `@csrf`, `old('email')` et `@error(...)` — donc le jour où vous
+branchez un vrai `AuthController` (ou Laravel Breeze/Fortify), il n'y a
+**aucun changement de markup à faire**, seulement la route POST et le
+contrôleur à ajouter.
+
+## Build
+
+```bash
+npm run dev     # pendant le développement
+npm run build   # pour la production
+```
+
+## Cohérence avec le splash screen
+
+La palette (`primary` #0B3D91, `secondary` #1E6F5C, `gold` #D4AF37), les
+polices, les effets de verre (`sheen`, `glass-highlight`) et le système de
+particules sont identiques au splash screen déjà livré. Les partials
+`background-scene`, `top-bar` et `footer` sont conçus pour être réutilisés
+si vous portez aussi le splash screen en Blade plus tard — demandez-le si
+besoin, il n'est pas inclus dans cette livraison (vous avez demandé
+uniquement la page de connexion).

@@ -1,0 +1,161 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\StoreCourrierRequest;
+use App\Http\Requests\UpdateCourrierRequest;
+use App\Models\Courrier;
+use App\Models\Routing;
+use App\Models\Service;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
+
+class CourrierController extends Controller
+{
+    public function __construct()
+    {
+        $this->authorizeResource(Courrier::class, 'courrier');
+    }
+
+    public function index(Request $request): View
+    {
+        $sort = in_array($request->query('sort'), Courrier::SORTABLE_COLUMNS, true)
+            ? $request->query('sort')
+            : 'date_reception';
+
+        $direction = $request->query('dir') === 'asc' ? 'asc' : 'desc';
+
+        $courriers = Courrier::query()
+            ->visibleTo($request->user())
+            ->search($request->query('q'))
+            ->statut($request->query('statut'))
+            ->priorite($request->query('priorite'))
+            ->when($request->filled('type'), fn ($query) => $query->where('type', $request->query('type')))
+            ->orderBy($sort, $direction)
+            ->paginate(10)
+            ->withQueryString();
+
+        return view('courriers.index', [
+            'courriers' => $courriers,
+            'sort' => $sort,
+            'direction' => $direction,
+            'filters' => $request->only(['q', 'statut', 'priorite', 'type']),
+            'types' => Courrier::query()
+                ->visibleTo($request->user())
+                ->select('type')->distinct()->orderBy('type')->pluck('type'),
+        ]);
+    }
+
+    public function create(): View
+    {
+        return view('courriers.create', [
+            'services' => Service::where('is_active', true)->orderBy('name')->get(),
+        ]);
+    }
+
+    public function store(StoreCourrierRequest $request): RedirectResponse
+    {
+        $data = $request->safe()->except('piece_jointe');
+        $data['user_id'] = $request->user()->id;
+        $data['statut'] = 'nouveau';
+
+        if ($request->hasFile('piece_jointe')) {
+            $data['piece_jointe'] = $request->file('piece_jointe')->store('courriers', 'public');
+        }
+
+        $courrier = DB::transaction(function () use ($data, $request) {
+            $courrier = Courrier::create($data);
+
+            // First move: straight from the Bureau d'Ordre (no source
+            // service) to whichever service was chosen on the form.
+            Routing::create([
+                'courrier_id' => $courrier->id,
+                'service_source_id' => null,
+                'service_destination_id' => $courrier->service_id,
+                'routed_by' => $request->user()->id,
+                'statut' => Routing::STATUT_EN_ATTENTE,
+                'sent_at' => now(),
+            ]);
+
+            return $courrier;
+        });
+
+        return redirect()
+            ->route('courriers.show', $courrier)
+            ->with('success', "Le courrier {$courrier->numero} a été créé avec succès.");
+    }
+
+    public function show(Courrier $courrier): View
+    {
+        return view('courriers.show', ['courrier' => $courrier]);
+    }
+
+    public function edit(Courrier $courrier): View
+    {
+        return view('courriers.edit', [
+            'courrier' => $courrier,
+            'services' => Service::where('is_active', true)->orderBy('name')->get(),
+        ]);
+    }
+
+    public function update(UpdateCourrierRequest $request, Courrier $courrier): RedirectResponse
+    {
+        $data = $request->safe()->except(['piece_jointe', 'remove_piece_jointe']);
+
+        if ($request->boolean('remove_piece_jointe') && $courrier->piece_jointe) {
+            Storage::disk('public')->delete($courrier->piece_jointe);
+            $data['piece_jointe'] = null;
+        }
+
+        if ($request->hasFile('piece_jointe')) {
+            if ($courrier->piece_jointe) {
+                Storage::disk('public')->delete($courrier->piece_jointe);
+            }
+
+            $data['piece_jointe'] = $request->file('piece_jointe')->store('courriers', 'public');
+        }
+
+        $courrier->update($data);
+
+        return redirect()
+            ->route('courriers.show', $courrier)
+            ->with('success', "Le courrier {$courrier->numero} a été mis à jour.");
+    }
+
+    public function destroy(Courrier $courrier): RedirectResponse
+    {
+        if ($courrier->piece_jointe) {
+            Storage::disk('public')->delete($courrier->piece_jointe);
+        }
+
+        $numero = $courrier->numero;
+        $courrier->delete();
+
+        return redirect()
+            ->route('courriers.index')
+            ->with('success', "Le courrier {$numero} a été supprimé.");
+    }
+
+    /**
+     * Archive a courrier that has already been processed.
+     */
+    public function archive(Request $request, Courrier $courrier): RedirectResponse
+    {
+        $this->authorize('archive', $courrier);
+
+        DB::transaction(function () use ($request, $courrier) {
+            $courrier->update([
+                'statut' => 'archive',
+                'archived_by' => $request->user()->id,
+                'archived_at' => now(),
+            ]);
+        });
+
+        return redirect()
+            ->route('courriers.show', $courrier)
+            ->with('success', "Le courrier {$courrier->numero} a été archivé.");
+    }
+}
