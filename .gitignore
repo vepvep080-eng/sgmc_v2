@@ -25,3 +25,9 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+sgmc-source.zip
+sgmc-source-safe.zip
+
+scanner-agent-dotnet/src/bin/
+scanner-agent-dotnet/src/obj/

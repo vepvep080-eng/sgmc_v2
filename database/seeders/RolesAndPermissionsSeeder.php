@@ -52,6 +52,16 @@ class RolesAndPermissionsSeeder extends Seeder
                     Permission::EXPORT,
                 ],
             ],
+            Role::CHEF_SECTION => [
+                'name' => 'Chef de Section',
+                'description' => 'Distribution et suivi des courriers dans sa section.',
+                'permissions' => [Permission::READ, Permission::UPDATE],
+            ],
+            Role::EMPLOYEE => [
+                'name' => 'Employé',
+                'description' => 'Consultation des courriers qui lui sont confiés.',
+                'permissions' => [Permission::READ],
+            ],
             Role::READ_ONLY => [
                 'name' => 'Utilisateur en lecture seule',
                 'description' => 'Consultation uniquement, aucune modification.',

@@ -20,7 +20,7 @@ class AuthController extends Controller
 
         $remember = $request->boolean('remember');
 
-        if (! Auth::attempt($credentials, $remember)) {
+        if (! Auth::attempt([...$credentials, 'is_active' => true], $remember)) {
             throw ValidationException::withMessages([
                 'email' => 'Les identifiants fournis ne correspondent à aucun compte.',
             ]);

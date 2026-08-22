@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: 'media',
+  darkMode: 'class',
   content: [
     './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
     './storage/framework/views/*.php',
@@ -11,42 +11,42 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#0B3D91',
-          50: '#EAF0FB',
-          100: '#C7D8F2',
-          300: '#5B84C9',
-          500: '#0B3D91',
-          600: '#092F70',
-          700: '#07234F',
-          900: '#04152F'
+          DEFAULT: '#6F8174',
+          50: '#F2F5F3',
+          100: '#E3EAE5',
+          300: '#B4C2B8',
+          500: '#6F8174',
+          600: '#5F7165',
+          700: '#4F6055',
+          900: '#26312B'
         },
         secondary: {
-          DEFAULT: '#1E6F5C',
-          50: '#E7F3EF',
-          300: '#5AA592',
-          500: '#1E6F5C',
-          700: '#134A3D'
+          DEFAULT: '#84988A',
+          50: '#F1F5F2',
+          300: '#BFCBBF',
+          500: '#84988A',
+          700: '#687B6D'
         },
         gold: {
-          DEFAULT: '#D4AF37',
-          50: '#FBF6E7',
-          200: '#EBD693',
-          300: '#E2C876',
-          400: '#D8BC55',
-          500: '#D4AF37',
-          600: '#B08F26',
-          700: '#8A6F1D'
+          DEFAULT: '#A6A68B',
+          50: '#F7F7F1',
+          200: '#E2E2D1',
+          300: '#D3D3BB',
+          400: '#BFC09F',
+          500: '#A6A68B',
+          600: '#8E8E75',
+          700: '#73735E'
         },
         canvas: {
           50: '#F7F8FA',
-          100: '#EEF1F6',
-          200: '#E4E9F0'
+          100: '#F1F3F2',
+          200: '#E3E7E4'
         },
         midnight: {
-          950: '#050B18',
-          900: '#0A1428',
-          800: '#0F1D3A',
-          700: '#152A4D'
+          950: '#1E2822',
+          900: '#26312B',
+          800: '#334039',
+          700: '#435148'
         }
       },
       fontFamily: {
@@ -55,14 +55,14 @@ export default {
         arabic: ['"Noto Naskh Arabic"', 'serif']
       },
       boxShadow: {
-        glass: '0 1px 1px rgba(255,255,255,0.6) inset, 0 8px 32px 0 rgba(11, 61, 145, 0.12)',
+        glass: '0 1px 1px rgba(255,255,255,0.8) inset, 0 4px 16px 0 rgba(38, 49, 43, 0.08)',
         'glass-lg':
-          '0 1px 1px rgba(255,255,255,0.7) inset, 0 -1px 1px rgba(11,61,145,0.04) inset, 0 24px 70px -16px rgba(11,61,145,0.32), 0 8px 24px -8px rgba(11,61,145,0.18)',
+          '0 1px 1px rgba(255,255,255,0.8) inset, 0 12px 32px -20px rgba(38,49,43,0.18)',
         'glass-lg-dark':
           '0 1px 1px rgba(255,255,255,0.06) inset, 0 24px 70px -16px rgba(0,0,0,0.55), 0 8px 24px -8px rgba(0,0,0,0.4)',
-        gold: '0 0 24px rgba(212, 175, 55, 0.35)',
-        'gold-glow': '0 0 32px rgba(212,175,55,0.45), 0 0 8px rgba(212,175,55,0.6)',
-        chip: '0 1px 1px rgba(255,255,255,0.6) inset, 0 6px 18px -6px rgba(11,61,145,0.22)'
+        gold: '0 0 16px rgba(166,166,139,0.18)',
+        'gold-glow': '0 0 18px rgba(111,129,116,0.20)',
+        chip: '0 1px 1px rgba(255,255,255,0.7) inset, 0 4px 12px -6px rgba(38,49,43,0.12)'
       },
       transitionTimingFunction: {
         fluent: 'cubic-bezier(0.16, 1, 0.3, 1)',

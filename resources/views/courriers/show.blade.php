@@ -24,6 +24,25 @@
             </div>
 
             <div class="flex items-center gap-2">
+                @can('view', $courrier)
+                    <a
+                        href="{{ route('courriers.export.pdf.show', $courrier) }}"
+                        class="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-primary-700/80 dark:text-primary-100/75 bg-primary-500/8 dark:bg-white/5 border border-primary-500/15 dark:border-white/10 hover:bg-primary-500/12 dark:hover:bg-white/10 transition-colors duration-200 ease-fluent"
+                    >
+                        <x-icon name="download" class="w-4 h-4" />
+                        Exporter PDF
+                    </a>
+                @endcan
+
+                <a
+                    href="{{ route('courriers.print.show', $courrier) }}"
+                    target="_blank"
+                    class="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-primary-700/80 dark:text-primary-100/75 bg-primary-500/8 dark:bg-white/5 border border-primary-500/15 dark:border-white/10 hover:bg-primary-500/12 dark:hover:bg-white/10 transition-colors duration-200 ease-fluent"
+                >
+                    <x-icon name="download" class="w-4 h-4" />
+                    Imprimer
+                </a>
+
                 <a
                     href="{{ route('courriers.edit', $courrier) }}"
                     class="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-primary-700/80 dark:text-primary-100/75 bg-primary-500/8 dark:bg-white/5 border border-primary-500/15 dark:border-white/10 hover:bg-primary-500/12 dark:hover:bg-white/10 transition-colors duration-200 ease-fluent"
@@ -110,4 +129,87 @@
     </div>
 
     @include('courriers._routing_timeline', ['courrier' => $courrier])
+
+    @can('update', $courrier)
+        <section class="mt-6 rounded-[24px] border border-white/70 bg-white/55 p-6 dark:border-white/10 dark:bg-white/[0.05]" data-scan-panel data-courrier-id="{{ $courrier->id }}">
+            <h2 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">{{ __('app.scan_documents') }}</h2>
+            <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/60" data-scanner-status>{{ __('app.scanner_unavailable') }}</p>
+            <button type="button" data-start-scan class="mt-4 rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white">{{ __('app.start_scan') }}</button>
+
+            <div class="mt-6 border-t pt-5 dark:border-white/10" data-qr-panel>
+                <h3 class="font-semibold text-primary-800 dark:text-primary-50">{{ __('app.read_qr') }}</h3>
+                <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/60">{{ __('app.qr_value') }}</p>
+                <input
+                    data-qr-payload
+                    type="text"
+                    class="mt-3 w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50 placeholder:text-primary-700/40 dark:placeholder:text-primary-100/30"
+                    maxlength="2048"
+                />
+                <button data-qr-submit type="button" class="mt-2 rounded-xl border border-primary-500/15 dark:border-white/10 px-4 py-2 text-sm text-primary-700 dark:text-primary-100">{{ __('app.read_qr') }}</button>
+                <pre data-qr-result class="mt-3 hidden whitespace-pre-wrap rounded-lg bg-slate-50 dark:bg-white/5 p-3 text-sm text-primary-800 dark:text-primary-50"></pre>
+            </div>
+        </section>
+        @push('scripts')
+        <script>
+            document.querySelector('[data-qr-submit]')?.addEventListener('click', async () => {
+                const input = document.querySelector('[data-qr-payload]'); const result = document.querySelector('[data-qr-result]');
+                const response = await fetch('{{ route('courriers.qr-payload.store', $courrier) }}', {method: 'POST', headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}'}, body: JSON.stringify({payload: input.value})});
+                const data = await response.json(); result.textContent = response.ok ? data.display : (data.message || ''); result.classList.remove('hidden');
+            });
+        </script>
+        @endpush
+    @endcan
+
+    @can('redirect', \App\Models\Routing::class)
+        <section class="mt-6 rounded-[24px] border border-white/70 bg-white/55 p-6 dark:border-white/10 dark:bg-white/[0.05]">
+            <h2 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">توجيه المراسلة</h2>
+            <form method="POST" action="{{ route('courriers.routings.store', $courrier) }}" class="mt-5 grid gap-4 sm:grid-cols-3">
+                @csrf
+                <div>
+                    <label for="department_id" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.department') }}</label>
+                    <select id="department_id" name="department_id" class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50">
+                        <option value="">{{ __('app.no_department') }}</option>
+                        @foreach($departments as $department)
+                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="service_destination_id" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.service') }}</label>
+                    <select id="service_destination_id" name="service_destination_id" required class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50">
+                        @foreach($departments as $department)
+                            <optgroup label="{{ $department->name }}">
+                                @foreach($department->services as $service)
+                                    <option value="{{ $service->id }}" data-department="{{ $department->id }}">{{ $service->name }}</option>
+                                @endforeach
+                            </optgroup>
+                        @endforeach
+                    </select>
+                    @error('service_destination_id')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label for="recipient_user_id" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.manager') }}</label>
+                    <select id="recipient_user_id" name="recipient_user_id" class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50">
+                        <option value="">{{ __('app.no_manager') }}</option>
+                        @foreach($recipients as $recipient)
+                            <option value="{{ $recipient->id }}" data-service="{{ $recipient->service_id }}">{{ $recipient->name }}{{ $recipient->service ? ' — '.$recipient->service->name : '' }}</option>
+                        @endforeach
+                    </select>
+                    @error('recipient_user_id')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
+                </div>
+                <div class="sm:col-span-3">
+                    <label for="commentaire" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.description') }}</label>
+                    <textarea
+                        id="commentaire"
+                        name="commentaire"
+                        class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50 placeholder:text-primary-700/40 dark:placeholder:text-primary-100/30"
+                    ></textarea>
+                </div>
+                <div class="sm:col-span-3">
+                    <button class="rounded-xl bg-primary-500 px-4 py-2 text-white">توجيه</button>
+                </div>
+            </form>
+        </section>
+    @endcan
+    @include('courriers._audit_history', ['courrier' => $courrier])
 @endsection

@@ -113,6 +113,17 @@
         @enderror
     </div>
 
+    <div>
+        <label for="section_id" class="block text-xs font-semibold uppercase tracking-wide text-primary-700/50 dark:text-primary-100/40 mb-1.5">{{ __('app.section') }}</label>
+        <select id="section_id" name="section_id" class="w-full px-4 py-2.5 rounded-xl text-sm bg-white/60 dark:bg-white/[0.04] border border-white/60 dark:border-white/10 text-primary-800 dark:text-primary-50">
+            <option value="">—</option>
+            @foreach ($sections as $section)
+                <option value="{{ $section->id }}" @selected(old('section_id', $user->section_id ?? '') == $section->id)>{{ $section->name }}</option>
+            @endforeach
+        </select>
+        @error('section_id')<p class="mt-1.5 text-xs text-rose-600 dark:text-rose-300">{{ $message }}</p>@enderror
+    </div>
+
     <div class="flex items-center">
         <label class="flex items-center gap-2.5 cursor-pointer select-none mt-5">
             <input

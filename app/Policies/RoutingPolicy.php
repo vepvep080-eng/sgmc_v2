@@ -10,7 +10,7 @@ class RoutingPolicy
 {
     public function redirect(User $user): bool
     {
-        return $user->hasRole(Role::ADMIN, Role::BUREAU_ORDRE);
+        return $user->hasRole(Role::ADMIN, Role::BUREAU_ORDRE, Role::CHEF_SERVICE, Role::CHEF_SECTION);
     }
 
     public function accept(User $user, Routing $routing): bool

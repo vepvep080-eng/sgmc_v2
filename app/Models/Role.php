@@ -17,6 +17,8 @@ class Role extends Model
     public const ADMIN = 'admin';
     public const BUREAU_ORDRE = 'bureau_ordre';
     public const CHEF_SERVICE = 'chef_service';
+    public const CHEF_SECTION = 'chef_section';
+    public const EMPLOYEE = 'employe';
     public const READ_ONLY = 'read_only';
 
     public function users(): HasMany

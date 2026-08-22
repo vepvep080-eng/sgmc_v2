@@ -6,6 +6,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Role;
 use App\Models\Service;
+use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -40,7 +41,8 @@ class UserController extends Controller
         $roles = Role::orderBy('name')->get();
         $services = Service::where('is_active', true)->orderBy('name')->get();
 
-        return view('users.create', compact('roles', 'services'));
+        $sections = Section::active()->orderBy('name')->get();
+        return view('users.create', compact('roles', 'services', 'sections'));
     }
 
     public function store(StoreUserRequest $request): RedirectResponse
@@ -60,7 +62,8 @@ class UserController extends Controller
         $roles = Role::orderBy('name')->get();
         $services = Service::where('is_active', true)->orderBy('name')->get();
 
-        return view('users.edit', compact('user', 'roles', 'services'));
+        $sections = Section::active()->orderBy('name')->get();
+        return view('users.edit', compact('user', 'roles', 'services', 'sections'));
     }
 
     public function update(UpdateUserRequest $request, User $user): RedirectResponse

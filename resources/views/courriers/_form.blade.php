@@ -74,7 +74,7 @@
             class="w-full rounded-xl bg-white/60 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-4 py-3 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40 @error('priorite') border-red-400 @enderror"
         >
             @foreach (\App\Models\Courrier::PRIORITES as $value => $label)
-                <option value="{{ $value }}" @selected(old('priorite', $courrier->priorite ?? 'normale') === $value)>{{ $label }}</option>
+                <option value="{{ $value }}" @selected(old('priorite', $courrier->priorite ?? 'normale') === $value)>{{ __('app.priorities.'.$value) }}</option>
             @endforeach
         </select>
         @error('priorite') <p class="mt-1.5 text-xs text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
@@ -121,24 +121,6 @@
         </select>
         @error('service_id') <p class="mt-1.5 text-xs text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
     </div>
-
-    @isset($showStatut)
-        {{-- Statut — edit only; new mails always start as "Nouveau" --}}
-        <div>
-            <label for="statut" class="block text-xs font-medium tracking-wide text-primary-700/75 dark:text-primary-100/70 mb-1.5">
-                Statut <span class="text-red-500">*</span>
-            </label>
-            <select
-                id="statut" name="statut" required
-                class="w-full rounded-xl bg-white/60 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-4 py-3 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40 @error('statut') border-red-400 @enderror"
-            >
-                @foreach (\App\Models\Courrier::STATUTS as $value => $label)
-                    <option value="{{ $value }}" @selected(old('statut', $courrier->statut) === $value)>{{ $label }}</option>
-                @endforeach
-            </select>
-            @error('statut') <p class="mt-1.5 text-xs text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
-        </div>
-    @endisset
 
     {{-- Description --}}
     <div class="sm:col-span-2">

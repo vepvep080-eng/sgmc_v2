@@ -21,9 +21,11 @@ class CourrierPolicy
             return true;
         }
 
-        return $user->hasRole(Role::CHEF_SERVICE)
+        return ($user->hasRole(Role::CHEF_SERVICE)
             && $user->service_id !== null
-            && $user->service_id === $courrier->service_id;
+            && $user->service_id === $courrier->service_id)
+            || ($user->hasRole(Role::CHEF_SECTION) && $user->section_id !== null && $user->section_id === $courrier->section_id)
+            || ($user->hasRole(Role::EMPLOYEE) && $user->id === $courrier->assigned_user_id);
     }
 
     public function create(User $user): bool

@@ -30,21 +30,48 @@
             </p>
         </div>
 
-        <a
-            href="{{ route('courriers.create') }}"
-            class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 via-primary-500 to-secondary-500 shadow-[0_10px_28px_-8px_rgba(11,61,145,0.5)] transition-all duration-300 ease-fluent hover:shadow-gold-glow hover:scale-[1.02] active:scale-[0.99]"
-        >
-            <x-icon name="plus-simple" class="w-4 h-4" />
-            Ajouter un courrier
-        </a>
+        <div class="flex flex-wrap items-center gap-3">
+            <a
+                href="{{ route('courriers.export.pdf', request()->query()) }}"
+                class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-700 dark:text-primary-100 bg-white/60 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 shadow-glass transition-all duration-300 ease-fluent hover:bg-white/80 dark:hover:bg-white/[0.1] hover:scale-[1.02] active:scale-[0.99]"
+            >
+                <x-icon name="download" class="w-4 h-4" />
+                Exporter PDF
+            </a>
+
+            <a
+                href="{{ route('courriers.print', request()->query()) }}"
+                target="_blank"
+                class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-700 dark:text-primary-100 bg-white/60 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 shadow-glass transition-all duration-300 ease-fluent hover:bg-white/80 dark:hover:bg-white/[0.1] hover:scale-[1.02] active:scale-[0.99]"
+            >
+                <x-icon name="download" class="w-4 h-4" />
+                Imprimer
+            </a>
+
+            <a
+                href="{{ route('courriers.export.excel', request()->query()) }}"
+                class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-700 dark:text-primary-100 bg-white/60 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 shadow-glass transition-all duration-300 ease-fluent hover:bg-white/80 dark:hover:bg-white/[0.1] hover:scale-[1.02] active:scale-[0.99]"
+            >
+                <x-icon name="download" class="w-4 h-4" />
+                Exporter Excel
+            </a>
+
+            <a
+                href="{{ route('courriers.create') }}"
+                class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 via-primary-500 to-secondary-500 shadow-[0_10px_28px_-8px_rgba(11,61,145,0.5)] transition-all duration-300 ease-fluent hover:shadow-gold-glow hover:scale-[1.02] active:scale-[0.99]"
+            >
+                <x-icon name="plus-simple" class="w-4 h-4" />
+                Ajouter un courrier
+            </a>
+        </div>
     </div>
 
     {{-- Filters --}}
     <div class="mt-6 relative rounded-[22px] bg-white/55 dark:bg-white/[0.05] backdrop-blur-xl border border-white/70 dark:border-white/10 shadow-glass px-5 sm:px-6 py-5 opacity-0 animate-fadeInUp" style="animation-delay: 0.1s;">
-        <form method="GET" action="{{ route('courriers.index') }}" class="flex flex-col lg:flex-row lg:items-end gap-4">
+        <form method="GET" action="{{ route('courriers.index') }}" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-7 xl:items-end">
 
             {{-- Search --}}
-            <div class="flex-1 min-w-0">
+            <div class="min-w-0 2xl:col-span-2">
                 <label for="q" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">
                     Rechercher
                 </label>
@@ -55,14 +82,14 @@
                     <input
                         id="q" name="q" type="text"
                         value="{{ $filters['q'] ?? '' }}"
-                        placeholder="Numéro, objet, expéditeur, référence…"
+                        placeholder="Numero, objet, expediteur, reference, description..."
                         class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 pl-10 pr-4 py-2.5 text-sm text-primary-900 dark:text-primary-50 placeholder:text-primary-500/40 dark:placeholder:text-primary-100/30 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40"
                     />
                 </div>
             </div>
 
             {{-- Statut --}}
-            <div class="w-full lg:w-44">
+            <div class="w-full">
                 <label for="statut" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">
                     Statut
                 </label>
@@ -78,7 +105,7 @@
             </div>
 
             {{-- Priorité --}}
-            <div class="w-full lg:w-44">
+            <div class="w-full">
                 <label for="priorite" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">
                     Priorité
                 </label>
@@ -95,7 +122,7 @@
 
             {{-- Type --}}
             @if ($types->isNotEmpty())
-                <div class="w-full lg:w-44">
+                <div class="w-full">
                     <label for="type" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">
                         Type
                     </label>
@@ -110,6 +137,26 @@
                     </select>
                 </div>
             @endif
+
+            <div class="w-full">
+                <label for="service_id" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">Service</label>
+                <select id="service_id" name="service_id" class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40">
+                    <option value="">Tous les services</option>
+                    @foreach ($services as $service)
+                        <option value="{{ $service->id }}" @selected((string) ($filters['service_id'] ?? '') === (string) $service->id)>{{ $service->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="w-full">
+                <label for="date_from" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">Reception du</label>
+                <input id="date_from" name="date_from" type="date" value="{{ $filters['date_from'] ?? '' }}" class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40" />
+            </div>
+
+            <div class="w-full">
+                <label for="date_to" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">Reception au</label>
+                <input id="date_to" name="date_to" type="date" value="{{ $filters['date_to'] ?? '' }}" class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40" />
+            </div>
 
             {{-- Actions --}}
             <div class="flex items-center gap-2 shrink-0">
@@ -195,6 +242,12 @@
                                     @if ($sortIcon('date_reception'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'date_reception' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
+                            <th class="px-4 py-3.5 hidden lg:table-cell">
+                                <a href="{{ $sortUrl('service') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
+                                    Service
+                                    @if ($sortIcon('service'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'service' ? 'rotate-180' : '' }}" />@endif
+                                </a>
+                            </th>
                             <th class="px-4 py-3.5 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45">Priorité</th>
                             <th class="px-4 py-3.5 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45">Statut</th>
                             <th class="px-6 sm:px-8 py-3.5"></th>
@@ -219,6 +272,9 @@
                                 </td>
                                 <td class="px-4 py-4 hidden sm:table-cell text-primary-700/60 dark:text-primary-100/50 whitespace-nowrap">
                                     {{ $courrier->date_reception?->locale('fr')->translatedFormat('d F Y') ?? '—' }}
+                                </td>
+                                <td class="px-4 py-4 hidden lg:table-cell text-primary-700/75 dark:text-primary-100/65 whitespace-nowrap">
+                                    {{ $courrier->service?->name ?? '-' }}
                                 </td>
                                 <td class="px-4 py-4">
                                     <x-badge :variant="$courrier->priorityVariant()">{{ $courrier->priorityLabel() }}</x-badge>

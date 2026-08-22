@@ -18,6 +18,8 @@ class StoreServiceRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'code' => ['required', 'string', 'max:20', Rule::unique('services', 'code')],
+            'department_id' => ['nullable', 'exists:departments,id'],
+            'manager_id' => ['nullable', 'exists:users,id'],
             'description' => ['nullable', 'string', 'max:500'],
             'is_active' => ['boolean'],
         ];

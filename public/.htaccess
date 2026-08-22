@@ -5,6 +5,10 @@
 
     RewriteEngine On
 
+    # Courrier attachments are authorized by the application, never served
+    # directly from the public storage junction.
+    RewriteRule ^storage/ - [F,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]

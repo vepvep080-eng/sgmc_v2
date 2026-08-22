@@ -24,7 +24,6 @@ class UpdateCourrierRequest extends FormRequest
             'type' => ['required', 'string', 'max:100'],
             'service_id' => ['required', 'exists:services,id'],
             'description' => ['nullable', 'string', 'max:5000'],
-            'statut' => ['required', Rule::in(array_keys(Courrier::STATUTS))],
             'piece_jointe' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
             'remove_piece_jointe' => ['nullable', 'boolean'],
         ];
@@ -39,7 +38,6 @@ class UpdateCourrierRequest extends FormRequest
             'reference' => 'référence',
             'priorite' => 'priorité',
             'service_id' => 'service destinataire',
-            'statut' => 'statut',
             'piece_jointe' => 'pièce jointe',
         ];
     }

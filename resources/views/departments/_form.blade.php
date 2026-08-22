@@ -1,0 +1,7 @@
+<div class="grid gap-5">
+    <div><label for="name" class="block text-sm font-medium mb-1.5">{{ __('app.department_name') }}</label><input id="name" name="name" required value="{{ old('name', $department->name ?? '') }}" class="w-full rounded-xl border px-4 py-2.5" />@error('name')<p class="text-xs text-red-600">{{ $message }}</p>@enderror</div>
+    <div><label for="code" class="block text-sm font-medium mb-1.5">{{ __('app.code') }}</label><input id="code" name="code" required maxlength="20" value="{{ old('code', $department->code ?? '') }}" class="w-full rounded-xl border px-4 py-2.5" />@error('code')<p class="text-xs text-red-600">{{ $message }}</p>@enderror</div>
+    <div><label for="manager_id" class="block text-sm font-medium mb-1.5">{{ __('app.manager') }}</label><select id="manager_id" name="manager_id" class="w-full rounded-xl border px-4 py-2.5"><option value="">{{ __('app.no_manager') }}</option>@foreach($managers as $manager)<option value="{{ $manager->id }}" @selected((int) old('manager_id', $department->manager_id ?? 0) === $manager->id)>{{ $manager->name }}</option>@endforeach</select></div>
+    <div><label for="description" class="block text-sm font-medium mb-1.5">{{ __('app.description') }}</label><textarea id="description" name="description" class="w-full rounded-xl border px-4 py-2.5">{{ old('description', $department->description ?? '') }}</textarea></div>
+    <label class="flex gap-2"><input type="checkbox" name="is_active" value="1" @checked(old('is_active', $department->is_active ?? true))>{{ __('app.active') }}</label>
+</div>

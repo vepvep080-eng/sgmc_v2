@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Courrier extends Model
 {
@@ -39,7 +39,7 @@ class Courrier extends Model
      * arbitrary column sorting from user input.
      */
     public const SORTABLE_COLUMNS = [
-        'numero', 'objet', 'expediteur', 'date_reception', 'priorite', 'statut', 'created_at',
+        'numero', 'objet', 'expediteur', 'date_reception', 'priorite', 'statut', 'service', 'created_at',
     ];
 
     protected $fillable = [
@@ -51,6 +51,8 @@ class Courrier extends Model
         'priorite',
         'type',
         'service_id',
+        'section_id',
+        'assigned_user_id',
         'description',
         'piece_jointe',
         'statut',
@@ -85,11 +87,15 @@ class Courrier extends Model
     {
         $year = now()->format('Y');
 
-        $count = static::withTrashedIfAvailable()
-            ->whereYear('created_at', $year)
-            ->count();
+        $prefix = "COUR-{$year}-";
+        $lastNumero = static::withTrashedIfAvailable()
+            ->where('numero', 'like', $prefix.'%')
+            ->orderByDesc('numero')
+            ->value('numero');
 
-        return sprintf('COUR-%s-%04d', $year, $count + 1);
+        $sequence = $lastNumero === null ? 1 : ((int) substr($lastNumero, strlen($prefix))) + 1;
+
+        return sprintf('COUR-%s-%04d', $year, $sequence);
     }
 
     /**
@@ -112,6 +118,9 @@ class Courrier extends Model
     {
         return $this->belongsTo(Service::class);
     }
+
+    public function section(): BelongsTo { return $this->belongsTo(Section::class); }
+    public function assignee(): BelongsTo { return $this->belongsTo(User::class, 'assigned_user_id'); }
 
     /**
      * The user who archived this courrier, if it has been archived.
@@ -142,18 +151,22 @@ class Courrier extends Model
      * The single most recent routing — the one currently "in play"
      * (pending, or the last accepted/refused move).
      */
+    public function auditLogs(): MorphMany
+    {
+        return $this->morphMany(AuditLog::class, 'auditable')->latest();
+    }
     public function currentRouting(): HasOne
     {
         return $this->hasOne(Routing::class)->latestOfMany('sent_at');
     }
 
     /**
-     * Full public URL to the attachment, or null if none was uploaded.
+     * Authorized download URL for the attachment, or null if none was uploaded.
      */
     public function pieceJointeUrl(): ?string
     {
         return $this->piece_jointe
-            ? Storage::disk('public')->url($this->piece_jointe)
+            ? route('courriers.attachments.show', ['courrier' => $this, 'attachment' => 'piece_jointe'])
             : null;
     }
 
@@ -165,13 +178,13 @@ class Courrier extends Model
     }
 
     /**
-     * Full public URL to the processing attachment, or null if none
+     * Authorized download URL for the processing attachment, or null if none
      * was uploaded when the courrier was treated.
      */
     public function traitementPieceJointeUrl(): ?string
     {
         return $this->traitement_piece_jointe
-            ? Storage::disk('public')->url($this->traitement_piece_jointe)
+            ? route('courriers.attachments.show', ['courrier' => $this, 'attachment' => 'traitement_piece_jointe'])
             : null;
     }
 
@@ -184,12 +197,12 @@ class Courrier extends Model
 
     public function priorityLabel(): string
     {
-        return self::PRIORITES[$this->priorite] ?? self::PRIORITES['normale'];
+        return __('app.priorities.'.($this->priorite ?? 'normale'));
     }
 
     public function statusLabel(): string
     {
-        return self::STATUTS[$this->statut] ?? self::STATUTS['nouveau'];
+        return __('app.statuses.'.($this->statut ?? 'nouveau'));
     }
 
     /**
@@ -231,7 +244,8 @@ class Courrier extends Model
             $q->where('numero', 'like', "%{$term}%")
                 ->orWhere('objet', 'like', "%{$term}%")
                 ->orWhere('expediteur', 'like', "%{$term}%")
-                ->orWhere('reference', 'like', "%{$term}%");
+                ->orWhere('reference', 'like', "%{$term}%")
+                ->orWhere('description', 'like', "%{$term}%");
         });
     }
 
@@ -246,10 +260,10 @@ class Courrier extends Model
     }
 
     /**
-     * Data isolation between services: admins and the Bureau d'Ordre see
-     * every courrier (they're the ones routing them in the first place);
-     * a chef_service only ever sees courriers currently assigned to
-     * their own service.
+     * Data isolation between services: admins, Bureau d'Ordre users and
+     * read-only users see every courrier; a chef_service only sees
+     * courriers assigned to their own service. Users without a recognised
+     * role are intentionally given an empty result set.
      */
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
@@ -257,6 +271,18 @@ class Courrier extends Model
             return $query;
         }
 
-        return $query->where('service_id', $user->service_id);
+        if ($user->hasRole(Role::CHEF_SERVICE) && $user->service_id !== null) {
+            return $query->where('service_id', $user->service_id);
+        }
+
+        if ($user->hasRole(Role::CHEF_SECTION) && $user->section_id !== null) {
+            return $query->where('section_id', $user->section_id);
+        }
+
+        if ($user->hasRole(Role::EMPLOYEE)) {
+            return $query->where('assigned_user_id', $user->id);
+        }
+
+        return $query->whereNull('courriers.id');
     }
 }

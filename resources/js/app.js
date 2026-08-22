@@ -7,8 +7,15 @@
  */
 
 import flatpickr from 'flatpickr';
+import { Arabic } from 'flatpickr/dist/l10n/ar.js';
 import { French } from 'flatpickr/dist/l10n/fr.js';
 import 'flatpickr/dist/flatpickr.min.css';
+import './scanner.js';
+
+const isRtl = document.documentElement.dir === 'rtl';
+const dateLocale = isRtl ? Arabic : French;
+
+flatpickr.localize(dateLocale);
 
 /* ---------------------------------------------------- */
 /* Floating particles — pure CSS animation, JS only      */
@@ -81,26 +88,43 @@ function initPasswordToggles() {
 /* Applies to any input marked with [data-flatpickr].       */
 /* ---------------------------------------------------- */
 function initDatePickers() {
-  const dateInputs = document.querySelectorAll('[data-flatpickr]');
+  const dateInputs = document.querySelectorAll('[data-flatpickr], input[type="date"]');
   if (!dateInputs.length) return;
 
   dateInputs.forEach((input) => {
-    // Preserve every existing Tailwind class on the visible input that
-    // Flatpickr creates (altInput) so styling stays identical.
     const originalClasses = input.className;
 
     flatpickr(input, {
-      locale: French,
-      dateFormat: 'Y-m-d', // what actually gets submitted to Laravel (kept in the original, hidden input)
+      locale: dateLocale,
+      dateFormat: 'Y-m-d',
       altInput: true,
-      altFormat: 'd/m/Y', // what the user sees
+      altFormat: 'd/m/Y',
+      ariaDateFormat: 'l j F Y',
       altInputClass: originalClasses,
       allowInput: true,
-      disableMobile: true, // force the Flatpickr UI even on mobile, so locale/digits stay consistent
+      disableMobile: true,
+      onReady: (_, __, instance) => {
+        const dateElements = [
+          input,
+          instance.altInput,
+          instance.calendarContainer,
+          ...instance.calendarContainer.querySelectorAll('input, select, button'),
+        ].filter(Boolean);
+
+        dateElements.forEach((element) => {
+          element.setAttribute('lang', isRtl ? 'ar' : 'fr-FR');
+          element.setAttribute('dir', 'ltr');
+        });
+
+        input.placeholder = isRtl ? 'YYYY/MM/DD' : 'JJ/MM/AAAA';
+
+        if (instance.altInput) {
+          instance.altInput.placeholder = isRtl ? 'YYYY/MM/DD' : 'JJ/MM/AAAA';
+        }
+      },
     });
   });
 }
-
 /* ---------------------------------------------------- */
 /* Splash screen — circular ring + linear bar + redirect  */
 /* No-ops automatically on pages without #progress-ring.  */
@@ -208,12 +232,12 @@ function initSidebar() {
   if (!sidebar || !backdrop) return;
 
   function open() {
-    sidebar.classList.remove('-translate-x-full');
+    sidebar.classList.remove(isRtl ? 'translate-x-full' : '-translate-x-full');
     backdrop.classList.remove('hidden');
   }
 
   function close() {
-    sidebar.classList.add('-translate-x-full');
+    sidebar.classList.add(isRtl ? 'translate-x-full' : '-translate-x-full');
     backdrop.classList.add('hidden');
   }
 
@@ -302,6 +326,25 @@ function initFileInputs() {
   });
 }
 
+function initThemeToggle() {
+  const toggle = document.querySelector('[data-theme-toggle]');
+  if (!toggle) return;
+
+  const sync = () => {
+    const dark = document.documentElement.classList.contains('dark');
+    toggle.querySelector('[data-theme-light]')?.classList.toggle('hidden', dark);
+    toggle.querySelector('[data-theme-dark]')?.classList.toggle('hidden', !dark);
+    toggle.setAttribute('aria-pressed', String(dark));
+  };
+
+  sync();
+  toggle.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+    localStorage.setItem('sgmc-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    sync();
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initParticles('particle-field');
   initPasswordToggles();
@@ -311,4 +354,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initConfirmModal();
   initToasts();
   initFileInputs();
+  initThemeToggle();
 });

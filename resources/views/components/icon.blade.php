@@ -33,6 +33,7 @@
         'arrow-left' => '<path d="M19 12H5" /><path d="M11 6l-6 6 6 6" />',
         'refresh' => '<path d="M4 12a8 8 0 0 1 14-5.3L20 8" /><path d="M20 4v4h-4" /><path d="M20 12a8 8 0 0 1-14 5.3L4 16" /><path d="M4 20v-4h4" />',
         'building' => '<path d="M5 21V5.5A1.5 1.5 0 0 1 6.5 4h11A1.5 1.5 0 0 1 19 5.5V21" /><path d="M3 21h18" /><path d="M9 8h1M14 8h1M9 12h1M14 12h1M9 16h1M14 16h1" />',
+        'bell' => '<path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" />',
         'archive' => '<path d="M4 7h16" /><path d="M5 7l.5 12.5A1.5 1.5 0 0 0 7 21h10a1.5 1.5 0 0 0 1.5-1.5L19 7" /><path d="M4 4h16v3H4Z" /><path d="M10 11.5h4" />',
     ];
 

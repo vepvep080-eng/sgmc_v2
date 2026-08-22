@@ -25,6 +25,7 @@ class StoreUserRequest extends FormRequest
                 'nullable',
                 Rule::exists('services', 'id'),
             ],
+            'section_id' => ['nullable', Rule::exists('sections', 'id')],
             'is_active' => ['boolean'],
         ];
     }
@@ -44,6 +45,7 @@ class StoreUserRequest extends FormRequest
             'password' => 'mot de passe',
             'role_id' => 'rôle',
             'service_id' => 'service',
+            'section_id' => 'section',
         ];
     }
 

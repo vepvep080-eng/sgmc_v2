@@ -1,0 +1,3 @@
+@extends('layouts.app')
+@section('title', __('app.sections')) @section('page-title', __('app.sections'))
+@section('content')<a href="{{ route('sections.create') }}" class="rounded bg-primary-500 px-3 py-2 text-white">{{ __('app.add_section') }}</a><table class="mt-4 w-full"><thead><tr><th class="text-start">{{ __('app.section') }}</th><th class="text-start">{{ __('app.service') }}</th><th></th></tr></thead><tbody>@foreach($sections as $section)<tr><td>{{ $section->name }}</td><td>{{ $section->service->name }}</td><td><a href="{{ route('sections.edit',$section) }}">{{ __('app.edit') }}</a></td></tr>@endforeach</tbody></table>{{ $sections->links() }}@endsection

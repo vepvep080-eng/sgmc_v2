@@ -24,6 +24,8 @@ class Routing extends Model
         'courrier_id',
         'service_source_id',
         'service_destination_id',
+        'section_destination_id',
+        'recipient_user_id',
         'routed_by',
         'statut',
         'sent_at',
@@ -54,10 +56,16 @@ class Routing extends Model
     {
         return $this->belongsTo(Service::class, 'service_destination_id');
     }
+    public function sectionDestination(): BelongsTo { return $this->belongsTo(Section::class, 'section_destination_id'); }
 
     public function routedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'routed_by');
+    }
+
+    public function recipient(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'recipient_user_id');
     }
 
     public function statusLabel(): string

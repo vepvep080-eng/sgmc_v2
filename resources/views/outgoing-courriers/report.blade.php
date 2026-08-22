@@ -1,0 +1,6 @@
+@extends('layouts.app')
+@section('title', 'Rapport courriers depart')
+@section('page-title', 'Rapport courriers depart')
+@section('content')
+<div class="rounded-[24px] border border-white/70 bg-white/55 p-6 shadow-glass-lg dark:border-white/10 dark:bg-white/[0.05]"><h2 class="font-display text-2xl font-semibold text-primary-800 dark:text-primary-50">Rapport courriers depart</h2><p class="mt-2 text-3xl font-semibold text-primary-700 dark:text-primary-100">{{ $report['total'] }}</p><p class="text-sm text-primary-700/60">Total selon les filtres actifs et vos autorisations.</p><div class="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-3">@foreach(['byStatus'=>'Par statut','byPriority'=>'Par priorite','byMode'=>'Par mode d envoi','byMonth'=>'Distribution mensuelle'] as $key=>$title)<section class="rounded-xl border border-white/70 p-4 dark:border-white/10"><h3 class="font-semibold">{{ $title }}</h3><ul class="mt-2 text-sm">@foreach($report[$key] as $label=>$count)<li>{{ $label }} : {{ $count }}</li>@endforeach</ul></section>@endforeach<section class="rounded-xl border border-white/70 p-4 dark:border-white/10"><h3 class="font-semibold">Par service</h3><ul class="mt-2 text-sm">@foreach($report['byService'] as $item)<li>{{ $item['label'] }} : {{ $item['value'] }}</li>@endforeach</ul></section></div></div>
+@endsection

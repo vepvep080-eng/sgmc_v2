@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('title', "Tableau de bord — Bureau d'Ordre")
-@section('page-title', 'Tableau de bord')
+@section('page-title', __('app.dashboard'))
 
 @section('content')
     <div class="flex flex-wrap items-end justify-between gap-4 opacity-0 animate-fadeInUp" style="animation-delay: 0.05s;">
         <div>
             <h2 class="font-display font-semibold text-2xl text-primary-800 dark:text-primary-50">
-                Bienvenue, {{ Auth::user()->name }}
+                {{ __('app.welcome', ['name' => Auth::user()->name]) }}
             </h2>
             <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/50">
                 Aperçu en temps réel de l'activité du Bureau d'Ordre.
@@ -23,10 +23,10 @@
     </div>
 
     <div class="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 opacity-0 animate-fadeInUp" style="animation-delay: 0.1s;">
-        <x-stat-card icon="inbox" label="Total des courriers" :value="$statistics['total']" accent="primary" />
-        <x-stat-card icon="plus" label="Nouveaux" :value="$statistics['nouveaux']" accent="gold" />
-        <x-stat-card icon="clock" label="En attente" :value="$statistics['en_attente']" accent="gold" />
-        <x-stat-card icon="refresh" label="En cours" :value="$statistics['en_cours']" accent="secondary" />
+        <x-stat-card icon="inbox" :label="__('app.total_mail')" :value="$statistics['total']" accent="primary" />
+        <x-stat-card icon="plus" :label="__('app.new')" :value="$statistics['nouveaux']" accent="gold" />
+        <x-stat-card icon="clock" :label="__('app.pending')" :value="$statistics['en_attente']" accent="gold" />
+        <x-stat-card icon="refresh" :label="__('app.in_progress')" :value="$statistics['en_cours']" accent="secondary" />
         <x-stat-card icon="check-circle" label="Traités" :value="$statistics['traites']" accent="secondary" />
         <x-stat-card icon="archive" label="Archivés" :value="$statistics['archives']" accent="primary" />
     </div>

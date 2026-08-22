@@ -3,7 +3,7 @@
 @section('title', "Connexion — Bureau d'Ordre")
 
 @section('content')
-<main class="relative min-h-screen w-full flex flex-col items-center justify-between px-6 py-10 sm:py-14 bg-gradient-to-br from-canvas-50 via-canvas-100 to-canvas-200 dark:from-midnight-950 dark:via-midnight-900 dark:to-midnight-800 bg-[length:220%_220%] animate-gradientShift transition-colors duration-700 ease-out overflow-hidden">
+<main class="relative min-h-screen w-full flex flex-col items-center justify-between px-6 py-10 sm:py-14 bg-canvas-50 dark:bg-midnight-950 transition-colors duration-200 ease-out overflow-hidden">
 
     @include('partials.background-scene')
 
@@ -58,7 +58,7 @@
                 {{-- Email --}}
                 <div>
                     <label for="email" class="block text-xs font-medium tracking-wide text-primary-700/75 dark:text-primary-100/70 mb-1.5">
-                        Adresse e-mail
+                        {{ __('app.email') }}
                     </label>
                     <div class="relative">
                         <span class="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-primary-500/50 dark:text-primary-100/40">
@@ -86,7 +86,7 @@
                 {{-- Password --}}
                 <div>
                     <label for="password" class="block text-xs font-medium tracking-wide text-primary-700/75 dark:text-primary-100/70 mb-1.5">
-                        Mot de passe
+                        {{ __('app.password') }}
                     </label>
                     <div class="relative">
                         <span class="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-primary-500/50 dark:text-primary-100/40">
@@ -139,7 +139,7 @@
                                 <path d="M1 5l3 3 7-7" />
                             </svg>
                         </span>
-                        Se souvenir de moi
+                        {{ __('app.remember_me') }}
                     </label>
 
                     {{-- Placeholder — no password-reset flow yet --}}
@@ -158,7 +158,7 @@
                     type="submit"
                     class="mt-2 relative w-full rounded-xl bg-gradient-to-r from-primary-500 via-primary-500 to-secondary-500 text-white text-sm font-semibold tracking-wide py-3.5 shadow-[0_10px_30px_-8px_rgba(11,61,145,0.5)] transition-all duration-300 ease-fluent hover:shadow-gold-glow hover:scale-[1.02] active:scale-[0.99] focus-visible:ring-2 focus-visible:ring-gold-400/60"
                 >
-                    Se connecter
+                    {{ __('app.sign_in') }}
                 </button>
             </form>
 

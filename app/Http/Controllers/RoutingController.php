@@ -21,6 +21,8 @@ class RoutingController extends Controller
                 'courrier_id' => $courrier->id,
                 'service_source_id' => $courrier->service_id,
                 'service_destination_id' => $newServiceId,
+                'section_destination_id' => $request->validated('section_destination_id'),
+                'recipient_user_id' => $request->validated('recipient_user_id'),
                 'routed_by' => $request->user()->id,
                 'statut' => Routing::STATUT_EN_ATTENTE,
                 'sent_at' => now(),
@@ -29,6 +31,8 @@ class RoutingController extends Controller
 
             $courrier->update([
                 'service_id' => $newServiceId,
+                'section_id' => $request->validated('section_destination_id'),
+                'assigned_user_id' => $request->validated('recipient_user_id'),
                 'statut' => 'nouveau',
             ]);
         });

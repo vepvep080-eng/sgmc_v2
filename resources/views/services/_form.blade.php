@@ -14,6 +14,26 @@
 </div>
 
 <div>
+    <label for="department_id" class="block text-sm font-medium text-primary-800 dark:text-primary-50 mb-1.5">{{ __('app.department') }}</label>
+    <select id="department_id" name="department_id" class="w-full rounded-xl border border-white/60 dark:border-white/10 bg-white/60 dark:bg-white/5 px-4 py-2.5 text-sm text-primary-800 dark:text-primary-50">
+        <option value="">{{ __('app.no_department') }}</option>
+        @foreach ($departments as $department)
+            <option value="{{ $department->id }}" @selected((int) old('department_id', $service->department_id ?? 0) === $department->id)>{{ $department->name }}</option>
+        @endforeach
+    </select>
+</div>
+
+<div>
+    <label for="manager_id" class="block text-sm font-medium text-primary-800 dark:text-primary-50 mb-1.5">{{ __('app.manager') }}</label>
+    <select id="manager_id" name="manager_id" class="w-full rounded-xl border border-white/60 dark:border-white/10 bg-white/60 dark:bg-white/5 px-4 py-2.5 text-sm text-primary-800 dark:text-primary-50">
+        <option value="">{{ __('app.no_manager') }}</option>
+        @foreach ($managers as $manager)
+            <option value="{{ $manager->id }}" @selected((int) old('manager_id', $service->manager_id ?? 0) === $manager->id)>{{ $manager->name }}</option>
+        @endforeach
+    </select>
+</div>
+
+<div>
     <label for="code" class="block text-sm font-medium text-primary-800 dark:text-primary-50 mb-1.5">Code</label>
     <input
         type="text"

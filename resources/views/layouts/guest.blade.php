@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ app()->getLocale() }}" dir="{{ app()->isLocale('ar') ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,6 +8,11 @@
     <meta name="description" content="Bureau d'Ordre — Commune de Jerada" />
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#EEF1F6" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#050B18" />
+    <script>
+        (() => {
+            if (localStorage.getItem('sgmc-theme') === 'dark') document.documentElement.classList.add('dark');
+        })();
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('title',__('app.edit')) @section('page-title',__('app.edit')) @section('content')<form method="POST" action="{{ route('sections.update',$section) }}">@csrf @method('PUT') @include('sections._form')<button class="mt-4 rounded bg-primary-500 px-3 py-2 text-white">{{ __('app.save') }}</button></form>@endsection

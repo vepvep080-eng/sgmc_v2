@@ -23,7 +23,7 @@
             @csrf
             @method('PUT')
 
-            @include('courriers._form', ['courrier' => $courrier, 'showStatut' => true])
+            @include('courriers._form', ['courrier' => $courrier])
 
             <div class="mt-8 flex items-center justify-end gap-3">
                 <a href="{{ route('courriers.show', $courrier) }}" class="rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-700/75 dark:text-primary-100/70 hover:bg-primary-500/8 dark:hover:bg-white/5 transition-colors duration-200 ease-fluent">

@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('title',__('app.add_section')) @section('page-title',__('app.add_section')) @section('content')<form method="POST" action="{{ route('sections.store') }}">@csrf @include('sections._form',['section'=>new \App\Models\Section])<button class="mt-4 rounded bg-primary-500 px-3 py-2 text-white">{{ __('app.save') }}</button></form>@endsection

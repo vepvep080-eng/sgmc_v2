@@ -3,31 +3,66 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --color-primary: #6F8174;
+    --color-primary-hover: #5F7165;
+    --color-background: #F7F8FA;
+    --color-surface: #FFFFFF;
+    --color-border: #E3E7E4;
+    --color-text: #26312B;
+    --color-muted: #68736D;
+  }
+
+  .dark {
+    --color-background: #1E2822;
+    --color-surface: #26312B;
+    --color-border: #435148;
+    --color-text: #F3F6F3;
+    --color-muted: #BFC9C1;
+  }
+
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    background-color: #eef1f6;
+    background-color: var(--color-background);
+    color: var(--color-text);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  @media (prefers-color-scheme: dark) {
-    body {
-      background-color: #050b18;
-    }
+  .dark body {
+    background-color: var(--color-background);
   }
 
   ::selection {
-    background-color: rgba(212, 175, 55, 0.35);
-    color: #04152f;
+    background-color: rgba(111, 129, 116, 0.30);
+    color: #26312B;
   }
 
   :focus-visible {
-    outline: 2px solid #d4af37;
+    outline: 2px solid var(--color-primary);
     outline-offset: 3px;
     border-radius: 4px;
+  }
+
+  html[dir='rtl'] body {
+    text-align: right;
+  }
+
+  html[dir='rtl'] input,
+  html[dir='rtl'] textarea,
+  html[dir='rtl'] select {
+    text-align: start;
+  }
+
+  html[dir='rtl'] table {
+    text-align: right;
+  }
+
+  html[dir='rtl'] .rtl-flip {
+    transform: scaleX(-1);
   }
 }
 
@@ -259,4 +294,23 @@ span.flatpickr-weekday {
 input.flatpickr-input[readonly],
 input[data-flatpickr] ~ input.form-control.input {
   cursor: pointer;
+}
+
+.flatpickr-calendar,
+.flatpickr-calendar * {
+  direction: ltr;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+input.flatpickr-input,
+input[data-flatpickr] {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.flatpickr-calendar .numInput,
+.flatpickr-calendar .cur-year,
+.flatpickr-calendar .flatpickr-day {
+  font-family: Inter, "Segoe UI", sans-serif;
+  -webkit-locale: "en";
 }

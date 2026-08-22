@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'role_id', 'service_id', 'is_active'])]
+#[Fillable(['name', 'email', 'password', 'role_id', 'service_id', 'section_id', 'is_active'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -45,6 +45,11 @@ class User extends Authenticatable
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(Section::class);
     }
 
     public function hasRole(string ...$slugs): bool

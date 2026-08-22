@@ -1,0 +1,9 @@
+{
+    "host": "127.0.0.1",
+    "port": 8765,
+    "sgmc_url": "http://localhost:8000",
+    "temp_dir": "storage/temp",
+    "max_file_size": 10485760,
+    "allowed_mimes": ["pdf", "doc", "docx", "jpg", "jpeg", "png"],
+    "job_timeout_minutes": 15
+}
