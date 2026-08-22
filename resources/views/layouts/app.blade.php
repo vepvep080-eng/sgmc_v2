@@ -1,12 +1,19 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+@php($rtl = app()->isLocale('ar'))
+<html lang="{{ app()->getLocale() }}" dir="{{ $rtl ? 'rtl' : 'ltr' }}">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
-    <title>@yield('title', "Bureau d'Ordre")</title>
+    <title>@yield('title', __('app.app_name'))</title>
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#EEF1F6" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#050B18" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <script>
+        (() => {
+            if (localStorage.getItem('sgmc-theme') === 'dark') document.documentElement.classList.add('dark');
+        })();
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -19,7 +26,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="font-sans antialiased min-h-screen bg-gradient-to-br from-canvas-50 via-canvas-100 to-canvas-200 dark:from-midnight-950 dark:via-midnight-900 dark:to-midnight-800 bg-[length:220%_220%] animate-gradientShift">
+<body class="{{ $rtl ? 'font-arabic' : 'font-sans' }} antialiased min-h-screen bg-canvas-50 dark:bg-midnight-950">
 
     <div class="flex min-h-screen">
 
@@ -34,7 +41,7 @@
         <aside
             id="app-sidebar"
             data-sidebar
-            class="fixed inset-y-0 left-0 z-40 w-72 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-fluent bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl border-r border-white/60 dark:border-white/10 flex flex-col"
+            class="fixed inset-y-0 {{ $rtl ? 'right-0 translate-x-full lg:translate-x-0 border-l' : 'left-0 -translate-x-full lg:translate-x-0 border-r' }} z-40 w-72 transition-transform duration-300 ease-fluent bg-white/60 dark:bg-white/[0.04] backdrop-blur-2xl border-white/60 dark:border-white/10 flex flex-col"
         >
             <div class="flex items-center gap-3 px-6 py-5 border-b border-white/50 dark:border-white/10">
                 <img src="{{ asset('assets/logo-bureau-ordre.png') }}" alt="Bureau d'Ordre" class="w-10 h-10 object-contain drop-shadow-[0_4px_10px_rgba(11,61,145,0.25)]" />
@@ -57,7 +64,7 @@
                     class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ease-fluent {{ request()->routeIs('dashboard') ? 'bg-primary-500/10 text-primary-700 dark:bg-white/10 dark:text-primary-50' : 'text-primary-700/70 dark:text-primary-100/65 hover:bg-primary-500/6 dark:hover:bg-white/5' }}"
                 >
                     <x-icon name="home" class="w-[18px] h-[18px] {{ request()->routeIs('dashboard') ? 'text-gold-500' : 'opacity-60' }}" />
-                    Tableau de bord
+                    {{ __('app.dashboard') }}
                 </a>
 
                 <p class="px-3 mt-4 mb-1.5 text-[10px] font-semibold tracking-widest uppercase text-primary-700/40 dark:text-primary-100/35">
@@ -71,19 +78,42 @@
                     <x-icon name="inbox" class="w-[18px] h-[18px] {{ request()->routeIs('courriers.*') ? 'text-gold-500' : 'opacity-60' }}" />
                     Courriers arrivés
                 </a>
+                <a
+                    href="{{ route('courriers-depart.index') }}"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ease-fluent {{ request()->routeIs('courriers-depart.*') ? 'bg-primary-500/10 text-primary-700 dark:bg-white/10 dark:text-primary-50' : 'text-primary-700/70 dark:text-primary-100/65 hover:bg-primary-500/6 dark:hover:bg-white/5' }}"
+                >
+                    <x-icon name="archive" class="w-[18px] h-[18px] {{ request()->routeIs('courriers-depart.*') ? 'text-gold-500' : 'opacity-60' }}" />
+                    Courriers départ
+                </a>
+
+                <a
+                    href="{{ route('courriers.quick-create') }}"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ease-fluent {{ request()->routeIs('courriers.quick-create') ? 'bg-primary-500/10 text-primary-700 dark:bg-white/10 dark:text-primary-50' : 'text-primary-700/70 dark:text-primary-100/65 hover:bg-primary-500/6 dark:hover:bg-white/5' }}"
+                >
+                    <x-icon name="archive" class="w-[18px] h-[18px] {{ request()->routeIs('courriers.quick-create') ? 'text-gold-500' : 'opacity-60' }}" />
+                    Scanner un document
+                </a>
+                @can('viewAny', \App\Models\AuditLog::class)
+                    <a
+                        href="{{ route('audit-logs.index') }}"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ease-fluent {{ request()->routeIs('audit-logs.*') ? 'bg-primary-500/10 text-primary-700 dark:bg-white/10 dark:text-primary-50' : 'text-primary-700/70 dark:text-primary-100/65 hover:bg-primary-500/6 dark:hover:bg-white/5' }}"
+                    >
+                        <x-icon name="clock" class="w-[18px] h-[18px] {{ request()->routeIs('audit-logs.*') ? 'text-gold-500' : 'opacity-60' }}" />
+                        {{ __('app.audit_log') }}
+                    </a>
+                @endcan
+
 
                 <span
                     role="link"
                     aria-disabled="true"
                     tabindex="-1"
                     title="Bientôt disponible"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-primary-700/35 dark:text-primary-100/25 cursor-not-allowed select-none"
+                    class="hidden"
                 >
                     <x-icon name="archive" class="w-[18px] h-[18px] opacity-50" />
                     Courriers départ
-                </span>
-
-                <span
+                </span><span
                     role="link"
                     aria-disabled="true"
                     tabindex="-1"
@@ -116,7 +146,7 @@
         </aside>
 
         {{-- Main column --}}
-        <div class="flex-1 flex flex-col min-w-0 lg:pl-72">
+        <div class="flex-1 flex flex-col min-w-0 {{ $rtl ? 'lg:pr-72' : 'lg:pl-72' }}">
 
             {{-- Topbar --}}
             <header class="sticky top-0 z-20 backdrop-blur-xl bg-white/50 dark:bg-midnight-900/50 border-b border-white/50 dark:border-white/10">
@@ -126,10 +156,28 @@
                     </button>
 
                     <h1 class="font-display font-semibold text-lg sm:text-xl text-primary-800 dark:text-primary-50">
-                        @yield('page-title', 'Tableau de bord')
+                        @yield('page-title', __('app.dashboard'))
                     </h1>
 
-                    <div class="ml-auto flex items-center gap-2 text-xs text-primary-700/50 dark:text-primary-100/40">
+                    <div class="{{ $rtl ? 'mr-auto' : 'ml-auto' }} flex items-center rounded-lg border border-primary-500/15 bg-white/60 text-xs font-semibold text-primary-700 dark:border-white/10 dark:bg-white/[0.06] dark:text-primary-100">
+                        <a href="{{ route('language.update', 'fr') }}" class="px-2.5 py-1.5 {{ app()->isLocale('fr') ? 'bg-primary-500 text-white' : '' }}">{{ __('app.french') }}</a>
+                        <a href="{{ route('language.update', 'ar') }}" class="px-2.5 py-1.5 {{ app()->isLocale('ar') ? 'bg-primary-500 text-white' : '' }}">ع</a>
+                    </div>
+
+                    <button type="button" data-theme-toggle class="rounded-lg p-2 text-primary-700/65 transition-colors hover:bg-primary-500/8 hover:text-primary-700 dark:text-primary-100/60 dark:hover:bg-white/10" aria-label="{{ __('app.theme_toggle') }}" title="{{ __('app.theme_toggle') }}">
+                        <span data-theme-light aria-hidden="true">☀</span>
+                        <span data-theme-dark class="hidden" aria-hidden="true">☾</span>
+                    </button>
+
+                    @php($unreadNotifications = Auth::user()->unreadNotifications()->count())
+                    <a href="{{ route('notifications.index') }}" class="relative rounded-lg p-2 text-primary-700/65 transition-colors hover:bg-primary-500/8 hover:text-primary-700 dark:text-primary-100/60 dark:hover:bg-white/10 dark:hover:text-primary-50" aria-label="Notifications">
+                        <x-icon name="bell" class="h-5 w-5" />
+                        @if ($unreadNotifications)
+                            <span class="absolute -right-1 -top-1 min-w-5 rounded-full bg-gold-500 px-1 text-center text-[10px] font-bold leading-5 text-primary-900">{{ $unreadNotifications > 99 ? '99+' : $unreadNotifications }}</span>
+                        @endif
+                    </a>
+
+                    <div class="flex items-center gap-2 text-xs text-primary-700/50 dark:text-primary-100/40">
                         <x-icon name="building" class="w-4 h-4" />
                         Commune de Jerada
                     </div>
