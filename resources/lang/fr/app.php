@@ -186,4 +186,8 @@ return [
     'recipient_service' => 'Service destinataire',
     'create_and_scan' => 'Créer et numériser',
     'file_size_hint' => 'PDF, DOCX ou image — 10 Mo maximum',
+    'subject_placeholder' => "Ex : demande de raccordement au réseau d'assainissement",
+    'sender_placeholder' => "Nom de la personne ou de l'organisme",
+    'file_click_or_drag' => 'Cliquez pour choisir un fichier',
+    'file_or_drag' => 'ou glissez-le ici',
 ];
