@@ -160,4 +160,17 @@ return [
     'edit_courrier_title' => 'Modifier le courrier',
     'back_to_detail' => 'Retour aux détails',
     'save_changes' => 'Enregistrer les modifications',
+    'audit_actions' => [
+        'created' => 'Création',
+        'updated' => 'Modification',
+        'deleted' => 'Suppression',
+        'routed' => 'Routage',
+        'prepared' => 'Préparation',
+        'scan_started' => 'Démarrage du scan',
+        'printed_list' => 'Impression de la liste',
+        'printed_outgoing_list' => 'Impression de la liste des courriers départ',
+        'exported_pdf' => 'Export PDF',
+        'exported_outgoing_pdf' => 'Export PDF (départ)',
+        'exported_outgoing_excel' => 'Export Excel (départ)',
+    ],
 ];
