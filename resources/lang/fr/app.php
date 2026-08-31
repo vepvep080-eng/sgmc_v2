@@ -103,4 +103,8 @@ return [
     'attachment_hint' => 'PDF, DOC, DOCX ou image — 10 Mo maximum.',
     'current_file' => 'Fichier actuel (:ext)',
     'save_courrier' => 'Enregistrer le courrier',
+    'outgoing_new_title' => "Nouveau courrier départ — Bureau d'Ordre",
+    'outgoing_page_title' => 'Nouveau courrier départ',
+    'outgoing_register_title' => 'Enregistrer un courrier départ',
+    'outgoing_number_note' => "Le numéro est généré automatiquement lors de l'enregistrement.",
 ];
