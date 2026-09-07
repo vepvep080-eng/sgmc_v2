@@ -4,21 +4,21 @@
 
 @layer base {
   :root {
-    --color-primary: #6F8174;
-    --color-primary-hover: #5F7165;
-    --color-background: #F7F8FA;
+    --color-primary: #0D4A36;
+    --color-primary-hover: #083325;
+    --color-background: #E7FFF3;
     --color-surface: #FFFFFF;
-    --color-border: #E3E7E4;
-    --color-text: #26312B;
-    --color-muted: #68736D;
+    --color-border: #DCE4E0;
+    --color-text: #082018;
+    --color-muted: #4D655D;
   }
 
   .dark {
-    --color-background: #1E2822;
-    --color-surface: #26312B;
-    --color-border: #435148;
-    --color-text: #F3F6F3;
-    --color-muted: #BFC9C1;
+    --color-background: #082018;
+    --color-surface: #0E2B20;
+    --color-border: #2A4436;
+    --color-text: #E7FFF3;
+    --color-muted: #A9D8C3;
   }
 
   html {
@@ -37,8 +37,8 @@
   }
 
   ::selection {
-    background-color: rgba(111, 129, 116, 0.30);
-    color: #26312B;
+    background-color: rgba(13, 74, 54, 0.30);
+    color: #F8FAF9;
   }
 
   :focus-visible {
@@ -127,7 +127,7 @@
   width: var(--p-size, 4px);
   height: var(--p-size, 4px);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(212, 175, 55, 0.85), rgba(212, 175, 55, 0));
+  background: radial-gradient(circle, rgba(201, 151, 56, 0.85), rgba(201, 151, 56, 0));
   filter: blur(0.4px);
   animation: particleFloat var(--p-duration, 20s) linear infinite;
   animation-delay: var(--p-delay, 0s);

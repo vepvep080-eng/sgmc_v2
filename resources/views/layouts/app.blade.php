@@ -18,7 +18,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@500;600;700&display=swap"
         rel="stylesheet"
     />
     <link rel="icon" href="data:," />
@@ -124,6 +124,10 @@
             </nav>
 
             <div class="px-4 py-4 border-t border-white/50 dark:border-white/10">
+                <div class="flex items-center justify-center gap-1.5 mb-2 rounded-lg border border-gold-500/25 bg-primary-500/5 px-2.5 py-1 text-[10px] font-semibold tracking-wide text-primary-600/80 dark:border-white/10 dark:bg-white/5 dark:text-primary-200/70">
+                    <span class="h-1.5 w-1.5 rounded-full bg-gold-500" aria-hidden="true"></span>
+                    {{ __('app.app_version') }}
+                </div>
                 <div class="flex items-center gap-3 px-2 mb-3">
                     <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-xs font-semibold shrink-0">
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}

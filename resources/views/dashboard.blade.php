@@ -4,6 +4,72 @@
 @section('page-title', __('app.dashboard'))
 
 @section('content')
+    @php
+        // ---- Presentation helpers derived from the existing $charts payload (display only) ----
+        $monthLabels = $charts['par_mois']['labels'] ?? [];
+        $monthVals = $charts['par_mois']['data'] ?? [];
+        $serviceLabels = $charts['par_service']['labels'] ?? [];
+        $serviceVals = $charts['par_service']['data'] ?? [];
+        $statusLabels = $charts['par_statut']['labels'] ?? [];
+        $statusVals = $charts['par_statut']['data'] ?? [];
+        $priorityLabels = $charts['par_priorite']['labels'] ?? [];
+        $priorityVals = $charts['par_priorite']['data'] ?? [];
+
+        // Monthly trend for the total card (last completed month vs previous)
+        $trendLabel = null;
+        $monthTotal = count($monthVals);
+        if ($monthTotal >= 2 && $monthVals[$monthTotal - 2] > 0) {
+            $delta = (int) round(($monthVals[$monthTotal - 1] - $monthVals[$monthTotal - 2]) / $monthVals[$monthTotal - 2] * 100);
+            $trendLabel = ($delta >= 0 ? '+' : '') . $delta . '% ' . __('app.stat_trend');
+        }
+
+        // Peak month for the line chart header pill
+        $peakIdx = null;
+        $peakVal = 0;
+        for ($i = 0; $i < count($monthVals); $i++) {
+            if ($monthVals[$i] > $peakVal) { $peakVal = $monthVals[$i]; $peakIdx = $i; }
+        }
+        $peakLabel = $peakIdx !== null ? ($monthLabels[$peakIdx] ?? null) : null;
+
+        $serviceColors = ['#0D4A36', '#A67A1E', '#C99738', '#D97706', '#707974', '#BA2525'];
+        $serviceTotal = 0;
+        for ($i = 0; $i < count($serviceVals); $i++) { $serviceTotal += $serviceVals[$i]; }
+        $serviceLegend = [];
+        for ($i = 0; $i < count($serviceLabels); $i++) {
+            $serviceLegend[] = [
+                'label' => $serviceLabels[$i],
+                'pct' => $serviceTotal > 0 ? (int) round($serviceVals[$i] / $serviceTotal * 100) : 0,
+                'color' => $serviceColors[$i % count($serviceColors)],
+            ];
+        }
+
+        $statusColors = ['#0D4A36', '#C99738', '#A67A1E', '#16A34A', '#707974'];
+        $statusTotal = 0;
+        for ($i = 0; $i < count($statusVals); $i++) { $statusTotal += $statusVals[$i]; }
+        $statusLegend = [];
+        for ($i = 0; $i < count($statusLabels); $i++) {
+            $statusLegend[] = [
+                'label' => $statusLabels[$i],
+                'value' => $statusVals[$i] ?? 0,
+                'pct' => $statusTotal > 0 ? (int) round($statusVals[$i] / $statusTotal * 100) : 0,
+                'color' => $statusColors[$i % count($statusColors)],
+            ];
+        }
+
+        $priorityColors = ['#707974', '#0D4A36', '#D97706', '#BA2525'];
+        $priorityTotal = 0;
+        for ($i = 0; $i < count($priorityVals); $i++) { $priorityTotal += $priorityVals[$i]; }
+        $priorityLegend = [];
+        for ($i = 0; $i < count($priorityLabels); $i++) {
+            $priorityLegend[] = [
+                'label' => $priorityLabels[$i],
+                'value' => $priorityVals[$i] ?? 0,
+                'pct' => $priorityTotal > 0 ? (int) round($priorityVals[$i] / $priorityTotal * 100) : 0,
+                'color' => $priorityColors[$i % count($priorityColors)],
+            ];
+        }
+    @endphp
+
     <div class="flex flex-wrap items-end justify-between gap-4 opacity-0 animate-fadeInUp" style="animation-delay: 0.05s;">
         <div>
             <h2 class="font-display font-semibold text-2xl text-primary-800 dark:text-primary-50">
@@ -11,6 +77,10 @@
             </h2>
             <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/50">
                 {{ __('app.dashboard_summary') }}
+            </p>
+            <p class="mt-2 flex items-center gap-2 text-[11px] font-medium text-primary-700/55 dark:text-primary-100/45">
+                <span class="h-1.5 w-1.5 rounded-full bg-gold-500 animate-pulse" aria-hidden="true"></span>
+                {{ now()->locale(app()->getLocale())->translatedFormat('l d F Y') }}
             </p>
         </div>
 
@@ -22,13 +92,13 @@
         @endcan
     </div>
 
-    <div class="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 opacity-0 animate-fadeInUp" style="animation-delay: 0.1s;">
-        <x-stat-card icon="inbox" :label="__('app.total_mail')" :value="$statistics['total']" accent="primary" />
-        <x-stat-card icon="plus" :label="__('app.new')" :value="$statistics['nouveaux']" accent="gold" />
-        <x-stat-card icon="clock" :label="__('app.pending')" :value="$statistics['en_attente']" accent="gold" />
-        <x-stat-card icon="refresh" :label="__('app.in_progress')" :value="$statistics['en_cours']" accent="secondary" />
-        <x-stat-card icon="check-circle" :label="__('app.stat_processed')" :value="$statistics['traites']" accent="secondary" />
-        <x-stat-card icon="archive" :label="__('app.stat_archived')" :value="$statistics['archives']" accent="primary" />
+    <div class="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 opacity-0 animate-fadeInUp" style="animation-delay: 0.1s;">
+        <x-stat-card icon="inbox" :label="__('app.total_mail')" :value="$statistics['total']" accent="primary" :trend="$trendLabel" solid unit="{{ __('app.stat_unit') }}" />
+        <x-stat-card icon="plus" :label="__('app.new')" :value="$statistics['nouveaux']" accent="gold" unit="{{ __('app.stat_unit') }}" />
+        <x-stat-card icon="clock" :label="__('app.pending')" :value="$statistics['en_attente']" accent="gold" unit="{{ __('app.stat_unit') }}" />
+        <x-stat-card icon="refresh" :label="__('app.in_progress')" :value="$statistics['en_cours']" accent="secondary" unit="{{ __('app.stat_unit') }}" />
+        <x-stat-card icon="check-circle" :label="__('app.stat_processed')" :value="$statistics['traites']" accent="secondary" unit="{{ __('app.stat_unit') }}" />
+        <x-stat-card icon="archive" :label="__('app.stat_archived')" :value="$statistics['archives']" accent="primary" unit="{{ __('app.stat_unit') }}" />
     </div>
 
     <div
@@ -40,9 +110,17 @@
         <section class="relative overflow-hidden rounded-[24px] border border-white/70 bg-white/55 px-6 py-6 shadow-glass-lg backdrop-blur-2xl dark:border-white/10 dark:bg-white/[0.05] dark:shadow-glass-lg-dark sm:px-8">
             <div class="absolute left-8 top-0 h-[2px] w-16 rounded-full bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
 
-            <h3 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">
-                {{ __('app.chart_by_month_title') }}
-            </h3>
+            <div class="flex items-center justify-between gap-2">
+                <h3 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">
+                    {{ __('app.chart_by_month_title') }}
+                </h3>
+                @if ($peakIdx !== null)
+                    <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary-50 px-2.5 py-1 text-[11px] font-semibold text-primary-700 dark:bg-white/10 dark:text-primary-200/70">
+                        <span class="h-1.5 w-1.5 rounded-full bg-gold-500" aria-hidden="true"></span>
+                        {{ __('app.chart_by_month_peak', ['month' => $peakLabel, 'count' => $peakVal]) }}
+                    </span>
+                @endif
+            </div>
             <p class="mt-1 text-xs text-primary-700/55 dark:text-primary-100/45">
                 {{ __('app.chart_by_month_description') }}
             </p>
@@ -65,6 +143,18 @@
             <div class="mt-6 h-72">
                 <canvas id="courriers-par-service-chart" aria-label="{{ __('app.chart_by_service_aria') }}" role="img"></canvas>
             </div>
+
+            @if (count($serviceLegend) > 0)
+                <ul class="mt-4 flex flex-wrap gap-1.5">
+                    @foreach ($serviceLegend as $item)
+                        <li class="inline-flex items-center gap-1.5 rounded-full border border-primary-500/10 bg-white/70 px-2 py-1 text-[11px] font-medium text-primary-700/80 dark:border-white/10 dark:bg-white/5 dark:text-primary-100/75">
+                            <span class="h-2 w-2 shrink-0 rounded-full" style="background: {{ $item['color'] }};" aria-hidden="true"></span>
+                            <span class="max-w-[160px] truncate">{{ $item['label'] }}</span>
+                            <span class="font-semibold tabular-nums text-primary-800 dark:text-primary-50">{{ $item['pct'] }}%</span>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         </section>
 
         <section class="relative overflow-hidden rounded-[24px] border border-white/70 bg-white/55 px-6 py-6 shadow-glass-lg backdrop-blur-2xl dark:border-white/10 dark:bg-white/[0.05] dark:shadow-glass-lg-dark sm:px-8">
@@ -77,9 +167,27 @@
                 {{ __('app.chart_by_status_description') }}
             </p>
 
-            <div class="mt-6 h-72">
+            <div class="relative mt-6 h-72">
                 <canvas id="repartition-statut-chart" aria-label="{{ __('app.chart_by_status_aria') }}" role="img"></canvas>
+                <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
+                    <div class="flex flex-col items-center leading-none">
+                        <span class="text-xl font-bold tabular-nums text-primary-800 dark:text-primary-50">{{ $statusTotal }}</span>
+                        <span class="text-[10px] font-medium text-primary-700/60 dark:text-primary-100/45">{{ __('app.total_label') }}</span>
+                    </div>
+                </div>
             </div>
+
+            @if (count($statusLegend) > 0)
+                <ul class="mt-4 flex flex-wrap gap-1.5">
+                    @foreach ($statusLegend as $item)
+                        <li class="inline-flex items-center gap-1.5 rounded-full border border-primary-500/10 bg-white/70 px-2 py-1 text-[11px] font-medium text-primary-700/80 dark:border-white/10 dark:bg-white/5 dark:text-primary-100/75">
+                            <span class="h-2 w-2 shrink-0 rounded-full" style="background: {{ $item['color'] }};" aria-hidden="true"></span>
+                            <span class="max-w-[140px] truncate">{{ $item['label'] }}</span>
+                            <span class="font-semibold tabular-nums text-primary-800 dark:text-primary-50">{{ $item['value'] }} · {{ $item['pct'] }}%</span>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         </section>
 
         <section class="relative overflow-hidden rounded-[24px] border border-white/70 bg-white/55 px-6 py-6 shadow-glass-lg backdrop-blur-2xl dark:border-white/10 dark:bg-white/[0.05] dark:shadow-glass-lg-dark sm:px-8">
@@ -92,9 +200,27 @@
                 {{ __('app.chart_by_priority_description') }}
             </p>
 
-            <div class="mt-6 h-72">
+            <div class="relative mt-6 h-72">
                 <canvas id="repartition-priorite-chart" aria-label="{{ __('app.chart_by_priority_aria') }}" role="img"></canvas>
+                <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
+                    <div class="flex flex-col items-center leading-none">
+                        <span class="text-xl font-bold tabular-nums text-primary-800 dark:text-primary-50">{{ $priorityTotal }}</span>
+                        <span class="text-[10px] font-medium text-primary-700/60 dark:text-primary-100/45">{{ __('app.total_label') }}</span>
+                    </div>
+                </div>
             </div>
+
+            @if (count($priorityLegend) > 0)
+                <ul class="mt-4 flex flex-wrap gap-1.5">
+                    @foreach ($priorityLegend as $item)
+                        <li class="inline-flex items-center gap-1.5 rounded-full border border-primary-500/10 bg-white/70 px-2 py-1 text-[11px] font-medium text-primary-700/80 dark:border-white/10 dark:bg-white/5 dark:text-primary-100/75">
+                            <span class="h-2 w-2 shrink-0 rounded-full" style="background: {{ $item['color'] }};" aria-hidden="true"></span>
+                            <span class="max-w-[140px] truncate">{{ $item['label'] }}</span>
+                            <span class="font-semibold tabular-nums text-primary-800 dark:text-primary-50">{{ $item['value'] }} · {{ $item['pct'] }}%</span>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
         </section>
     </div>
 

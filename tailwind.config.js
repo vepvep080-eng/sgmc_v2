@@ -11,48 +11,102 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#6F8174',
-          50: '#F2F5F3',
-          100: '#E3EAE5',
-          300: '#B4C2B8',
-          500: '#6F8174',
-          600: '#5F7165',
-          700: '#4F6055',
-          900: '#26312B'
+          DEFAULT: '#0D4A36',
+          50: '#E6F5EF',
+          100: '#CDEBDE',
+          200: '#A9D8C3',
+          300: '#7FBFA5',
+          400: '#2E7A58',
+          500: '#0D4A36',
+          600: '#083325',
+          700: '#072A20',
+          800: '#06231B',
+          900: '#041A14'
         },
         secondary: {
-          DEFAULT: '#84988A',
-          50: '#F1F5F2',
-          300: '#BFCBBF',
-          500: '#84988A',
-          700: '#687B6D'
+          DEFAULT: '#C99738',
+          50: '#FDF5E6',
+          100: '#FBE9C7',
+          200: '#F7D99B',
+          300: '#EEC25F',
+          400: '#D9A94A',
+          500: '#C99738',
+          600: '#A67A1E',
+          700: '#7D5A10',
+          800: '#5F4208',
+          900: '#402C00'
         },
         gold: {
-          DEFAULT: '#A6A68B',
-          50: '#F7F7F1',
-          200: '#E2E2D1',
-          300: '#D3D3BB',
-          400: '#BFC09F',
-          500: '#A6A68B',
-          600: '#8E8E75',
-          700: '#73735E'
+          DEFAULT: '#E0AD58',
+          50: '#FFF9EC',
+          200: '#FFE9B8',
+          300: '#FFDEAA',
+          400: '#F4CE6E',
+          500: '#E0AD58',
+          600: '#C99738',
+          700: '#A67A1E'
         },
         canvas: {
-          50: '#F7F8FA',
-          100: '#F1F3F2',
-          200: '#E3E7E4'
+          DEFAULT: '#E7FFF3',
+          50: '#E7FFF3',
+          100: '#DFFAED',
+          200: '#D9F4E7',
+          300: '#D4EEE2'
         },
         midnight: {
-          950: '#1E2822',
-          900: '#26312B',
-          800: '#334039',
-          700: '#435148'
+          DEFAULT: '#0E2B20',
+          950: '#082018',
+          900: '#0E2B20',
+          800: '#1E352C',
+          700: '#2A4436'
+        },
+        tertiary: {
+          DEFAULT: '#1D3B53',
+          50: '#EDF4FA',
+          100: '#D8E7F3',
+          200: '#B4CFE6',
+          300: '#8FB3D6',
+          400: '#2E5A7E',
+          500: '#1D3B53',
+          600: '#16304A',
+          700: '#132A3D'
+        },
+        surface: {
+          DEFAULT: '#FFFFFF',
+          base: '#F8FAF9',
+          low: '#DFFAED',
+          container: '#D9F4E7',
+          high: '#D4EEE2',
+          highest: '#CEE9DC'
+        },
+        ink: {
+          DEFAULT: '#082018',
+          variant: '#404944',
+          muted: '#4D655D'
+        },
+        outline: {
+          DEFAULT: '#707974',
+          variant: '#C0C9C2',
+          soft: '#DCE4E0',
+          strong: '#B6C5BF'
+        },
+        error: {
+          DEFAULT: '#BA1A1A',
+          container: '#FFDAD6',
+          'on-container': '#93000A'
+        },
+        status: {
+          success: { DEFAULT: '#127A52', bg: '#E6F5EF' },
+          pending: { DEFAULT: '#A26E0B', bg: '#FDF5E6' },
+          urgent: { DEFAULT: '#BA2525', bg: '#FDF0F0' },
+          incoming: { DEFAULT: '#1D476E', bg: '#EDF4FA' }
         }
       },
       fontFamily: {
-        display: ['"Cormorant Garamond"', 'serif'],
-        sans: ['Inter', '"Segoe UI"', 'sans-serif'],
-        arabic: ['"Noto Naskh Arabic"', 'serif']
+        display: ['"IBM Plex Sans"', '"Segoe UI"', 'sans-serif'],
+        sans: ['"IBM Plex Sans"', '"Segoe UI"', 'sans-serif'],
+        arabic: ['"IBM Plex Sans Arabic"', '"IBM Plex Sans"', '"Noto Naskh Arabic"', 'serif'],
+        registry: ['"IBM Plex Sans"', '"Segoe UI"', 'sans-serif']
       },
       boxShadow: {
         glass: '0 1px 1px rgba(255,255,255,0.8) inset, 0 4px 16px 0 rgba(38, 49, 43, 0.08)',
@@ -62,7 +116,13 @@ export default {
           '0 1px 1px rgba(255,255,255,0.06) inset, 0 24px 70px -16px rgba(0,0,0,0.55), 0 8px 24px -8px rgba(0,0,0,0.4)',
         gold: '0 0 16px rgba(166,166,139,0.18)',
         'gold-glow': '0 0 18px rgba(111,129,116,0.20)',
-        chip: '0 1px 1px rgba(255,255,255,0.7) inset, 0 4px 12px -6px rgba(38,49,43,0.12)'
+        chip: '0 1px 1px rgba(255,255,255,0.7) inset, 0 4px 12px -6px rgba(38,49,43,0.12)',
+        card: '0 20px 25px -5px rgba(13, 74, 54, 0.12), 0 8px 10px -6px rgba(13, 74, 54, 0.08)',
+        'card-md': '0 10px 15px -3px rgba(13, 74, 54, 0.10), 0 4px 6px -4px rgba(13, 74, 54, 0.06)',
+        field: '0 0 0 3px rgba(13, 74, 54, 0.12)'
+      },
+      borderRadius: {
+        '3xl': '1.25rem'
       },
       transitionTimingFunction: {
         fluent: 'cubic-bezier(0.16, 1, 0.3, 1)',

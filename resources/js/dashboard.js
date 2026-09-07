@@ -1,25 +1,64 @@
 import Chart from 'chart.js/auto';
 
 const COLORS = {
-  primary: '#0B3D91',
-  secondary: '#1E6F5C',
-  gold: '#D4AF37',
-  red: '#DC2626',
-  slate: '#64748B',
+  primary: '#0D4A36',
+  secondary: '#A67A1E',
+  gold: '#C99738',
+  red: '#BA2525',
+  slate: '#707974',
   amber: '#D97706',
 };
 
 function chartTextColor() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'rgba(226, 232, 240, 0.72)'
-    : 'rgba(7, 35, 79, 0.62)';
+    ? 'rgba(220, 247, 234, 0.72)'
+    : 'rgba(8, 32, 24, 0.62)';
 }
 
 function chartGridColor() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches
     ? 'rgba(255, 255, 255, 0.08)'
-    : 'rgba(11, 61, 145, 0.10)';
+    : 'rgba(13, 74, 54, 0.10)';
 }
+
+function chartValueColor() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'rgba(220, 247, 234, 0.9)'
+    : 'rgba(8, 32, 24, 0.85)';
+}
+
+// Draws the numeric value above each point/bar (line & bar charts only).
+const valueLabelsPlugin = {
+  id: 'sgmcValueLabels',
+  afterDatasetsDraw(chart) {
+    const type = chart.config ? chart.config.type : '';
+    if (type !== 'line' && type !== 'bar') return;
+
+    const data = chart.data.datasets[0].data;
+    if (!data || !data.length) return;
+
+    const area = chart.chartArea;
+    const step = (area.right - area.left) / data.length;
+    const ctx = chart.ctx;
+
+    ctx.save();
+    ctx.font = "600 10.5px 'IBM Plex Sans', 'Segoe UI', sans-serif";
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillStyle = chartValueColor();
+
+    data.forEach((value, i) => {
+      if (value === null || value === undefined) return;
+      const x = area.left + step * (i + 0.5);
+      const y = chart.scales.y.getPixelForValue(value) - (type === 'bar' ? 5 : 9);
+      ctx.fillText(String(value), x, y);
+    });
+
+    ctx.restore();
+  },
+};
+
+Chart.register(valueLabelsPlugin);
 
 function baseOptions() {
   return {
@@ -30,7 +69,7 @@ function baseOptions() {
         labels: {
           color: chartTextColor(),
           font: {
-            family: 'Inter',
+            family: 'IBM Plex Sans',
             size: 12,
           },
           usePointStyle: true,
@@ -62,13 +101,17 @@ function initDashboardCharts() {
           label: 'Courriers reçus',
           data: data.par_mois.data,
           borderColor: COLORS.primary,
-          backgroundColor: 'rgba(11, 61, 145, 0.12)',
+          backgroundColor: 'rgba(13, 74, 54, 0.12)',
           fill: true,
           tension: 0.35,
           pointRadius: 3,
           pointHoverRadius: 5,
-          pointBackgroundColor: COLORS.gold,
-          pointBorderColor: COLORS.gold,
+          pointBackgroundColor: data.par_mois.data.map(
+            (_, i) => (i === data.par_mois.data.length - 1) ? COLORS.gold : COLORS.primary
+          ),
+          pointBorderColor: data.par_mois.data.map(
+            (_, i) => (i === data.par_mois.data.length - 1) ? COLORS.gold : COLORS.primary
+          ),
         }],
       },
       options: {
@@ -173,6 +216,10 @@ function initDashboardCharts() {
       },
       options: {
         ...commonOptions,
+        plugins: {
+          ...commonOptions.plugins,
+          legend: { display: false },
+        },
         cutout: '64%',
       },
     });
@@ -199,6 +246,10 @@ function initDashboardCharts() {
       },
       options: {
         ...commonOptions,
+        plugins: {
+          ...commonOptions.plugins,
+          legend: { display: false },
+        },
         cutout: '64%',
       },
     });
