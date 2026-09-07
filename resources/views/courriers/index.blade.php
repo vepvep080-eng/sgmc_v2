@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', __('app.incoming') . " — " . __('app.app_name'))
 @section('page-title', __('app.incoming'))
@@ -83,7 +83,7 @@
                         id="q" name="q" type="text"
                         value="{{ $filters['q'] ?? '' }}"
                         placeholder="{{ __('app.search_placeholder') }}"
-                        class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 pl-10 pr-4 py-2.5 text-sm text-primary-900 dark:text-primary-50 placeholder:text-primary-500/40 dark:placeholder:text-primary-100/30 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40"
+                        class="w-full rounded-xl bg-primary-100/50 dark:bg-white/[0.06] border border-primary-500/10 dark:border-white/10 pl-10 pr-4 py-2.5 text-sm text-primary-900 dark:text-primary-50 placeholder:text-primary-500/40 dark:placeholder:text-primary-100/30 outline-none transition-all duration-300 ease-fluent focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
                     />
                 </div>
             </div>
@@ -95,7 +95,7 @@
                 </label>
                 <select
                     id="statut" name="statut"
-                    class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40"
+                    class="w-full rounded-xl bg-primary-100/50 dark:bg-white/[0.06] border border-primary-500/10 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
                 >
                     <option value="">{{ __('app.all_statuses') }}</option>
                     @foreach (\App\Models\Courrier::STATUTS as $value => $label)
@@ -111,7 +111,7 @@
                 </label>
                 <select
                     id="priorite" name="priorite"
-                    class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40"
+                    class="w-full rounded-xl bg-primary-100/50 dark:bg-white/[0.06] border border-primary-500/10 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
                 >
                     <option value="">{{ __('app.all_priorities') }}</option>
                     @foreach (\App\Models\Courrier::PRIORITES as $value => $label)
@@ -128,7 +128,7 @@
                     </label>
                     <select
                         id="type" name="type"
-                        class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40"
+                        class="w-full rounded-xl bg-primary-100/50 dark:bg-white/[0.06] border border-primary-500/10 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
                     >
                         <option value="">{{ __('app.all_types') }}</option>
                         @foreach ($types as $type)
@@ -140,7 +140,7 @@
 
             <div class="w-full">
                 <label for="service_id" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">{{ __('app.service') }}</label>
-                <select id="service_id" name="service_id" class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40">
+                <select id="service_id" name="service_id" class="w-full rounded-xl bg-primary-100/50 dark:bg-white/[0.06] border border-primary-500/10 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20">
                     <option value="">{{ __('app.all_services') }}</option>
                     @foreach ($services as $service)
                         <option value="{{ $service->id }}" @selected((string) ($filters['service_id'] ?? '') === (string) $service->id)>{{ $service->name }}</option>
@@ -150,12 +150,12 @@
 
             <div class="w-full">
                 <label for="date_from" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">{{ __('app.reception_from') }}</label>
-                <input id="date_from" name="date_from" type="date" value="{{ $filters['date_from'] ?? '' }}" class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40" />
+                <input id="date_from" name="date_from" type="date" value="{{ $filters['date_from'] ?? '' }}" class="w-full rounded-xl bg-primary-100/50 dark:bg-white/[0.06] border border-primary-500/10 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20" />
             </div>
 
             <div class="w-full">
                 <label for="date_to" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">{{ __('app.reception_to') }}</label>
-                <input id="date_to" name="date_to" type="date" value="{{ $filters['date_to'] ?? '' }}" class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40" />
+                <input id="date_to" name="date_to" type="date" value="{{ $filters['date_to'] ?? '' }}" class="w-full rounded-xl bg-primary-100/50 dark:bg-white/[0.06] border border-primary-500/10 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20" />
             </div>
 
             {{-- Actions --}}
@@ -216,48 +216,48 @@
         @else
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
-                    <thead class="sticky top-0 z-[5] bg-white/80 dark:bg-midnight-900/80 backdrop-blur-xl">
+                    <thead class="sticky top-0 z-[5] bg-primary-100/45 dark:bg-midnight-900/60 backdrop-blur-xl">
                         <tr class="border-b border-white/50 dark:border-white/10 text-left">
                             <th class="px-6 sm:px-8 py-3.5">
-                                <a href="{{ $sortUrl('numero') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
+                                <a href="{{ $sortUrl('numero') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-800/85 dark:text-primary-100/80 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
                                     {{ __('app.mail_number') }}
                                     @if ($sortIcon('numero'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'numero' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
                             <th class="px-4 py-3.5">
-                                <a href="{{ $sortUrl('objet') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
+                                <a href="{{ $sortUrl('objet') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-800/85 dark:text-primary-100/80 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
                                     {{ __('app.subject') }}
                                     @if ($sortIcon('objet'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'objet' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
                             <th class="px-4 py-3.5 hidden md:table-cell">
-                                <a href="{{ $sortUrl('expediteur') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
+                                <a href="{{ $sortUrl('expediteur') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-800/85 dark:text-primary-100/80 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
                                     {{ __('app.sender') }}
                                     @if ($sortIcon('expediteur'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'expediteur' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
                             <th class="px-4 py-3.5 hidden sm:table-cell">
-                                <a href="{{ $sortUrl('date_reception') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
+                                <a href="{{ $sortUrl('date_reception') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-800/85 dark:text-primary-100/80 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
                                     {{ __('app.reception') }}
                                     @if ($sortIcon('date_reception'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'date_reception' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
                             <th class="px-4 py-3.5 hidden lg:table-cell">
-                                <a href="{{ $sortUrl('service') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
+                                <a href="{{ $sortUrl('service') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-800/85 dark:text-primary-100/80 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
                                     {{ __('app.service') }}
                                     @if ($sortIcon('service'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'service' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
-                            <th class="px-4 py-3.5 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45">{{ __('app.priority') }}</th>
-                            <th class="px-4 py-3.5 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45">Statut</th>
+                            <th class="px-4 py-3.5 text-[11px] font-semibold tracking-wide uppercase text-primary-800/85 dark:text-primary-100/80">{{ __('app.priority') }}</th>
+                            <th class="px-4 py-3.5 text-[11px] font-semibold tracking-wide uppercase text-primary-800/85 dark:text-primary-100/80">Statut</th>
                             <th class="px-6 sm:px-8 py-3.5"></th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-white/40 dark:divide-white/5">
+                    <tbody class="divide-y divide-primary-500/10 dark:divide-white/5">
                         @foreach ($courriers as $courrier)
-                            <tr class="group even:bg-primary-500/[0.02] dark:even:bg-white/[0.015] hover:bg-primary-500/[0.05] dark:hover:bg-white/[0.04] transition-colors duration-150 ease-fluent">
+                            <tr class="group even:bg-primary-100/30 dark:even:bg-white/[0.015] hover:bg-primary-100/60 dark:hover:bg-white/[0.04] transition-colors duration-150 ease-fluent">
                                 <td class="px-6 sm:px-8 py-4">
-                                    <a href="{{ route('courriers.show', $courrier) }}" class="font-semibold text-primary-700 dark:text-primary-100 hover:text-gold-600 dark:hover:text-gold-400 transition-colors duration-150 whitespace-nowrap">
+                                    <a href="{{ route('courriers.show', $courrier) }}" class="font-semibold tabular-nums text-primary-800 dark:text-primary-100 hover:text-gold-600 dark:hover:text-gold-400 transition-colors duration-150 whitespace-nowrap">
                                         {{ $courrier->numero }}
                                     </a>
                                 </td>
@@ -267,14 +267,23 @@
                                     </a>
                                     <p class="md:hidden mt-0.5 text-xs text-primary-700/45 dark:text-primary-100/35 truncate">{{ $courrier->expediteur }}</p>
                                 </td>
-                                <td class="px-4 py-4 hidden md:table-cell text-primary-700/75 dark:text-primary-100/65">
-                                    {{ Str::limit($courrier->expediteur, 30) }}
+                                <td class="px-4 py-4 hidden md:table-cell">
+                                    <div class="flex items-center gap-2.5 min-w-[150px]">
+                                        <div class="w-8 h-8 shrink-0 rounded-full bg-primary-100/80 dark:bg-white/10 flex items-center justify-center text-primary-700 dark:text-primary-200 text-[11px] font-semibold">
+                                            {{ strtoupper(substr($courrier->expediteur, 0, 1)) }}
+                                        </div>
+                                        <span class="text-primary-700/80 dark:text-primary-100/70">{{ Str::limit($courrier->expediteur, 30) }}</span>
+                                    </div>
                                 </td>
-                                <td class="px-4 py-4 hidden sm:table-cell text-primary-700/60 dark:text-primary-100/50 whitespace-nowrap">
+                                <td class="px-4 py-4 hidden sm:table-cell text-primary-700/70 dark:text-primary-100/60 whitespace-nowrap tabular-nums">
                                     {{ $courrier->date_reception?->locale(app()->getLocale())->translatedFormat('d F Y') ?? '—' }}
                                 </td>
-                                <td class="px-4 py-4 hidden lg:table-cell text-primary-700/75 dark:text-primary-100/65 whitespace-nowrap">
-                                    {{ $courrier->service?->name ?? '-' }}
+                                <td class="px-4 py-4 hidden lg:table-cell whitespace-nowrap">
+                                    @if ($courrier->service)
+                                        <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-primary-100/60 dark:bg-white/10 text-[11px] font-medium text-primary-700/85 dark:text-primary-100/70">{{ $courrier->service->name }}</span>
+                                    @else
+                                        <span class="text-primary-700/40 dark:text-primary-100/30">—</span>
+                                    @endif
                                 </td>
                                 <td class="px-4 py-4">
                                     <x-badge :variant="$courrier->priorityVariant()">{{ $courrier->priorityLabel() }}</x-badge>
@@ -283,11 +292,11 @@
                                     <x-badge :variant="$courrier->statusVariant()">{{ $courrier->statusLabel() }}</x-badge>
                                 </td>
                                 <td class="px-6 sm:px-8 py-4">
-                                    <div class="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity duration-150">
-                                        <a href="{{ route('courriers.show', $courrier) }}" title="{{ __('app.view') }}" class="p-2 rounded-lg text-primary-500/60 dark:text-primary-100/50 hover:text-primary-700 hover:bg-primary-500/8 dark:hover:text-primary-100 dark:hover:bg-white/10 transition-colors duration-150">
+                                    <div class="flex items-center justify-end gap-1.5 opacity-70 group-hover:opacity-100 transition-opacity duration-150">
+                                        <a href="{{ route('courriers.show', $courrier) }}" title="{{ __('app.view') }}" class="w-8 h-8 rounded-lg bg-primary-500/8 dark:bg-white/5 flex items-center justify-center text-primary-500/70 dark:text-primary-100/60 hover:text-primary-700 hover:bg-primary-500/15 dark:hover:text-primary-100 dark:hover:bg-white/10 transition-colors duration-150">
                                             <x-icon name="eye" class="w-4 h-4" />
                                         </a>
-                                        <a href="{{ route('courriers.edit', $courrier) }}" title="{{ __('app.edit') }}" class="p-2 rounded-lg text-primary-500/60 dark:text-primary-100/50 hover:text-gold-600 hover:bg-gold-500/10 dark:hover:text-gold-400 transition-colors duration-150">
+                                        <a href="{{ route('courriers.edit', $courrier) }}" title="{{ __('app.edit') }}" class="w-8 h-8 rounded-lg bg-primary-500/8 dark:bg-white/5 flex items-center justify-center text-primary-500/70 dark:text-primary-100/60 hover:text-gold-600 hover:bg-gold-500/15 dark:hover:text-gold-400 transition-colors duration-150">
                                             <x-icon name="pencil" class="w-4 h-4" />
                                         </a>
                                         <button
@@ -296,7 +305,7 @@
                                             data-url="{{ route('courriers.destroy', $courrier) }}"
                                             data-message="{{ __('app.delete_confirm_mail', ['numero' => $courrier->numero]) }}"
                                             title="{{ __('app.delete') }}"
-                                            class="p-2 rounded-lg text-primary-500/60 dark:text-primary-100/50 hover:text-red-600 hover:bg-red-500/10 dark:hover:text-red-400 transition-colors duration-150"
+                                            class="w-8 h-8 rounded-lg bg-primary-500/8 dark:bg-white/5 flex items-center justify-center text-primary-500/70 dark:text-primary-100/60 hover:text-red-600 hover:bg-red-500/15 dark:hover:text-red-400 transition-colors duration-150"
                                         >
                                             <x-icon name="trash" class="w-4 h-4" />
                                         </button>
@@ -309,6 +318,20 @@
             </div>
 
             {{ $courriers->links('vendor.pagination.premium') }}
+
+            {{-- Quick archival context notice --}}
+            <div class="mt-5 rounded-xl bg-primary-100/60 dark:bg-white/[0.05] px-5 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 shrink-0 rounded-lg bg-primary-100/80 dark:bg-white/10 flex items-center justify-center text-primary-700 dark:text-primary-100">
+                        <x-icon name="archive" class="w-5 h-5" />
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-semibold text-primary-800 dark:text-primary-50">{{ __('app.archival_notice_title') }}</p>
+                        <p class="mt-1 text-xs text-primary-700/60 dark:text-primary-100/45">{{ __('app.archival_notice_description') }}</p>
+                    </div>
+                </div>
+                <span class="hidden lg:inline-flex shrink-0 items-center rounded-full bg-primary-100/80 dark:bg-white/10 px-3 py-1.5 text-[11px] font-semibold text-primary-700/85 dark:text-primary-100/80">{{ __('app.archival_notice_regulation') }}</span>
+            </div>
         @endif
     </div>
 @endsection

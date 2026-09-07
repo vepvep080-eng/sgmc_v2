@@ -26,7 +26,7 @@
             @include('courriers._form', ['courrier' => $courrier])
 
             <div class="mt-8 flex items-center justify-end gap-3">
-                <a href="{{ route('courriers.show', $courrier) }}" class="rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-700/75 dark:text-primary-100/70 hover:bg-primary-500/8 dark:hover:bg-white/5 transition-colors duration-200 ease-fluent">
+                <a href="{{ route('courriers.show', $courrier) }}" class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-700 dark:text-primary-100 bg-white/60 dark:bg-white/[0.06] border border-primary-500/15 dark:border-white/10 shadow-glass hover:bg-white/80 dark:hover:bg-white/[0.1] transition-all duration-200 ease-fluent">
                     {{ __('app.cancel') }}
                 </a>
                 <button
