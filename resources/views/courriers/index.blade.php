@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', "Courriers arrivés — Bureau d'Ordre")
-@section('page-title', 'Courriers arrivés')
+@section('title', __('app.incoming') . " — " . __('app.app_name'))
+@section('page-title', __('app.incoming'))
 
 @php
     use Illuminate\Support\Str;
@@ -24,9 +24,9 @@
     {{-- Header --}}
     <div class="flex flex-wrap items-center justify-between gap-4 opacity-0 animate-fadeInUp" style="animation-delay: 0.05s;">
         <div>
-            <h2 class="font-display font-semibold text-2xl text-primary-800 dark:text-primary-50">Courriers arrivés</h2>
+            <h2 class="font-display font-semibold text-2xl text-primary-800 dark:text-primary-50">{{ __('app.incoming') }}</h2>
             <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/50">
-                {{ $courriers->total() }} {{ Str::plural('courrier', $courriers->total()) }} enregistré{{ $courriers->total() > 1 ? 's' : '' }}
+                {{ $courriers->total() }} {{ __('app.mail') }} {{ __('app.registered') }}
             </p>
         </div>
 
@@ -36,7 +36,7 @@
                 class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-700 dark:text-primary-100 bg-white/60 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 shadow-glass transition-all duration-300 ease-fluent hover:bg-white/80 dark:hover:bg-white/[0.1] hover:scale-[1.02] active:scale-[0.99]"
             >
                 <x-icon name="download" class="w-4 h-4" />
-                Exporter PDF
+                {{ __('app.export_pdf') }}
             </a>
 
             <a
@@ -45,7 +45,7 @@
                 class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-700 dark:text-primary-100 bg-white/60 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 shadow-glass transition-all duration-300 ease-fluent hover:bg-white/80 dark:hover:bg-white/[0.1] hover:scale-[1.02] active:scale-[0.99]"
             >
                 <x-icon name="download" class="w-4 h-4" />
-                Imprimer
+                {{ __('app.print') }}
             </a>
 
             <a
@@ -53,7 +53,7 @@
                 class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-primary-700 dark:text-primary-100 bg-white/60 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 shadow-glass transition-all duration-300 ease-fluent hover:bg-white/80 dark:hover:bg-white/[0.1] hover:scale-[1.02] active:scale-[0.99]"
             >
                 <x-icon name="download" class="w-4 h-4" />
-                Exporter Excel
+                {{ __('app.export_excel') }}
             </a>
 
             <a
@@ -61,7 +61,7 @@
                 class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 via-primary-500 to-secondary-500 shadow-[0_10px_28px_-8px_rgba(11,61,145,0.5)] transition-all duration-300 ease-fluent hover:shadow-gold-glow hover:scale-[1.02] active:scale-[0.99]"
             >
                 <x-icon name="plus-simple" class="w-4 h-4" />
-                Ajouter un courrier
+                {{ __('app.add_mail') }}
             </a>
         </div>
     </div>
@@ -73,7 +73,7 @@
             {{-- Search --}}
             <div class="min-w-0 2xl:col-span-2">
                 <label for="q" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">
-                    Rechercher
+                    {{ __('app.search') }}
                 </label>
                 <div class="relative">
                     <span class="pointer-events-none absolute inset-y-0 left-3.5 flex items-center text-primary-500/45 dark:text-primary-100/35">
@@ -82,7 +82,7 @@
                     <input
                         id="q" name="q" type="text"
                         value="{{ $filters['q'] ?? '' }}"
-                        placeholder="Numero, objet, expediteur, reference, description..."
+                        placeholder="{{ __('app.search_placeholder') }}"
                         class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 pl-10 pr-4 py-2.5 text-sm text-primary-900 dark:text-primary-50 placeholder:text-primary-500/40 dark:placeholder:text-primary-100/30 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40"
                     />
                 </div>
@@ -97,9 +97,9 @@
                     id="statut" name="statut"
                     class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40"
                 >
-                    <option value="">Tous les statuts</option>
+                    <option value="">{{ __('app.all_statuses') }}</option>
                     @foreach (\App\Models\Courrier::STATUTS as $value => $label)
-                        <option value="{{ $value }}" @selected(($filters['statut'] ?? '') === $value)>{{ $label }}</option>
+                        <option value="{{ $value }}" @selected(($filters['statut'] ?? '') === $value)>{{ __('app.statuses.'.$value) }}</option>
                     @endforeach
                 </select>
             </div>
@@ -113,9 +113,9 @@
                     id="priorite" name="priorite"
                     class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40"
                 >
-                    <option value="">Toutes les priorités</option>
+                    <option value="">{{ __('app.all_priorities') }}</option>
                     @foreach (\App\Models\Courrier::PRIORITES as $value => $label)
-                        <option value="{{ $value }}" @selected(($filters['priorite'] ?? '') === $value)>{{ $label }}</option>
+                        <option value="{{ $value }}" @selected(($filters['priorite'] ?? '') === $value)>{{ __('app.priorities.'.$value) }}</option>
                     @endforeach
                 </select>
             </div>
@@ -130,7 +130,7 @@
                         id="type" name="type"
                         class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40"
                     >
-                        <option value="">Tous les types</option>
+                        <option value="">{{ __('app.all_types') }}</option>
                         @foreach ($types as $type)
                             <option value="{{ $type }}" @selected(($filters['type'] ?? '') === $type)>{{ $type }}</option>
                         @endforeach
@@ -139,9 +139,9 @@
             @endif
 
             <div class="w-full">
-                <label for="service_id" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">Service</label>
+                <label for="service_id" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">{{ __('app.service') }}</label>
                 <select id="service_id" name="service_id" class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40">
-                    <option value="">Tous les services</option>
+                    <option value="">{{ __('app.all_services') }}</option>
                     @foreach ($services as $service)
                         <option value="{{ $service->id }}" @selected((string) ($filters['service_id'] ?? '') === (string) $service->id)>{{ $service->name }}</option>
                     @endforeach
@@ -149,12 +149,12 @@
             </div>
 
             <div class="w-full">
-                <label for="date_from" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">Reception du</label>
+                <label for="date_from" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">{{ __('app.reception_from') }}</label>
                 <input id="date_from" name="date_from" type="date" value="{{ $filters['date_from'] ?? '' }}" class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40" />
             </div>
 
             <div class="w-full">
-                <label for="date_to" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">Reception au</label>
+                <label for="date_to" class="block text-[11px] font-medium tracking-wide text-primary-700/60 dark:text-primary-100/50 mb-1.5">{{ __('app.reception_to') }}</label>
                 <input id="date_to" name="date_to" type="date" value="{{ $filters['date_to'] ?? '' }}" class="w-full rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 px-3.5 py-2.5 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-gold-500 focus:ring-2 focus:ring-gold-400/40" />
             </div>
 
@@ -165,13 +165,13 @@
                     class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 to-secondary-500 shadow-[0_8px_20px_-8px_rgba(11,61,145,0.5)] transition-all duration-300 ease-fluent hover:scale-[1.02] active:scale-[0.99]"
                 >
                     <x-icon name="filter" class="w-4 h-4" />
-                    Filtrer
+                    {{ __('app.filter') }}
                 </button>
 
                 @if ($hasActiveFilters)
                     <a
                         href="{{ route('courriers.index') }}"
-                        title="Réinitialiser les filtres"
+                        title="{{ __('app.reset_filters') }}"
                         class="inline-flex items-center justify-center w-[42px] h-[42px] rounded-xl text-primary-700/60 dark:text-primary-100/50 bg-primary-500/8 dark:bg-white/5 border border-primary-500/15 dark:border-white/10 hover:bg-primary-500/12 dark:hover:bg-white/10 transition-colors duration-200 ease-fluent"
                     >
                         <x-icon name="refresh" class="w-4 h-4" />
@@ -189,26 +189,26 @@
             @if ($hasActiveFilters)
                 <x-empty-state
                     icon="search"
-                    title="Aucun résultat"
-                    description="Aucun courrier ne correspond à ces critères de recherche."
+                    title="{{ __('app.no_results') }}"
+                    description="{{ __('app.no_results_description') }}"
                 >
                     <x-slot:action>
                         <a href="{{ route('courriers.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-primary-700/80 dark:text-primary-100/75 bg-primary-500/8 dark:bg-white/5 border border-primary-500/15 dark:border-white/10 rounded-xl px-5 py-2.5 hover:bg-primary-500/12 dark:hover:bg-white/10 transition-colors duration-200 ease-fluent">
                             <x-icon name="refresh" class="w-4 h-4" />
-                            Réinitialiser les filtres
+                            {{ __('app.reset_filters') }}
                         </a>
                     </x-slot:action>
                 </x-empty-state>
             @else
                 <x-empty-state
                     icon="inbox"
-                    title="Aucun courrier enregistré"
-                    description="Commencez par enregistrer le premier courrier arrivé au Bureau d'Ordre."
+                    title="{{ __('app.no_mail') }}"
+                    description="{{ __('app.no_mail_description') }}"
                 >
                     <x-slot:action>
                         <a href="{{ route('courriers.create') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl px-5 py-2.5 shadow-[0_10px_24px_-8px_rgba(11,61,145,0.45)] hover:scale-[1.02] transition-transform duration-200 ease-fluent">
                             <x-icon name="plus-simple" class="w-4 h-4" />
-                            Créer le premier courrier
+                            {{ __('app.create_first_mail') }}
                         </a>
                     </x-slot:action>
                 </x-empty-state>
@@ -220,35 +220,35 @@
                         <tr class="border-b border-white/50 dark:border-white/10 text-left">
                             <th class="px-6 sm:px-8 py-3.5">
                                 <a href="{{ $sortUrl('numero') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
-                                    N° Courrier
+                                    {{ __('app.mail_number') }}
                                     @if ($sortIcon('numero'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'numero' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
                             <th class="px-4 py-3.5">
                                 <a href="{{ $sortUrl('objet') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
-                                    Objet
+                                    {{ __('app.subject') }}
                                     @if ($sortIcon('objet'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'objet' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
                             <th class="px-4 py-3.5 hidden md:table-cell">
                                 <a href="{{ $sortUrl('expediteur') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
-                                    Expéditeur
+                                    {{ __('app.sender') }}
                                     @if ($sortIcon('expediteur'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'expediteur' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
                             <th class="px-4 py-3.5 hidden sm:table-cell">
                                 <a href="{{ $sortUrl('date_reception') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
-                                    Réception
+                                    {{ __('app.reception') }}
                                     @if ($sortIcon('date_reception'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'date_reception' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
                             <th class="px-4 py-3.5 hidden lg:table-cell">
                                 <a href="{{ $sortUrl('service') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
-                                    Service
+                                    {{ __('app.service') }}
                                     @if ($sortIcon('service'))<x-icon name="chevron-down" class="w-3 h-3 {{ $direction === 'asc' && $sort === 'service' ? 'rotate-180' : '' }}" />@endif
                                 </a>
                             </th>
-                            <th class="px-4 py-3.5 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45">Priorité</th>
+                            <th class="px-4 py-3.5 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45">{{ __('app.priority') }}</th>
                             <th class="px-4 py-3.5 text-[11px] font-semibold tracking-wide uppercase text-primary-700/55 dark:text-primary-100/45">Statut</th>
                             <th class="px-6 sm:px-8 py-3.5"></th>
                         </tr>
@@ -271,7 +271,7 @@
                                     {{ Str::limit($courrier->expediteur, 30) }}
                                 </td>
                                 <td class="px-4 py-4 hidden sm:table-cell text-primary-700/60 dark:text-primary-100/50 whitespace-nowrap">
-                                    {{ $courrier->date_reception?->locale('fr')->translatedFormat('d F Y') ?? '—' }}
+                                    {{ $courrier->date_reception?->locale(app()->getLocale())->translatedFormat('d F Y') ?? '—' }}
                                 </td>
                                 <td class="px-4 py-4 hidden lg:table-cell text-primary-700/75 dark:text-primary-100/65 whitespace-nowrap">
                                     {{ $courrier->service?->name ?? '-' }}
@@ -284,18 +284,18 @@
                                 </td>
                                 <td class="px-6 sm:px-8 py-4">
                                     <div class="flex items-center justify-end gap-1 opacity-70 group-hover:opacity-100 transition-opacity duration-150">
-                                        <a href="{{ route('courriers.show', $courrier) }}" title="Voir" class="p-2 rounded-lg text-primary-500/60 dark:text-primary-100/50 hover:text-primary-700 hover:bg-primary-500/8 dark:hover:text-primary-100 dark:hover:bg-white/10 transition-colors duration-150">
+                                        <a href="{{ route('courriers.show', $courrier) }}" title="{{ __('app.view') }}" class="p-2 rounded-lg text-primary-500/60 dark:text-primary-100/50 hover:text-primary-700 hover:bg-primary-500/8 dark:hover:text-primary-100 dark:hover:bg-white/10 transition-colors duration-150">
                                             <x-icon name="eye" class="w-4 h-4" />
                                         </a>
-                                        <a href="{{ route('courriers.edit', $courrier) }}" title="Modifier" class="p-2 rounded-lg text-primary-500/60 dark:text-primary-100/50 hover:text-gold-600 hover:bg-gold-500/10 dark:hover:text-gold-400 transition-colors duration-150">
+                                        <a href="{{ route('courriers.edit', $courrier) }}" title="{{ __('app.edit') }}" class="p-2 rounded-lg text-primary-500/60 dark:text-primary-100/50 hover:text-gold-600 hover:bg-gold-500/10 dark:hover:text-gold-400 transition-colors duration-150">
                                             <x-icon name="pencil" class="w-4 h-4" />
                                         </a>
                                         <button
                                             type="button"
                                             data-confirm-delete
                                             data-url="{{ route('courriers.destroy', $courrier) }}"
-                                            data-message="Le courrier « {{ $courrier->numero }} » sera définitivement supprimé."
-                                            title="Supprimer"
+                                            data-message="{{ __('app.delete_confirm_mail', ['numero' => $courrier->numero]) }}"
+                                            title="{{ __('app.delete') }}"
                                             class="p-2 rounded-lg text-primary-500/60 dark:text-primary-100/50 hover:text-red-600 hover:bg-red-500/10 dark:hover:text-red-400 transition-colors duration-150"
                                         >
                                             <x-icon name="trash" class="w-4 h-4" />

@@ -10,34 +10,48 @@ namespace ScannerAgent;
  *  - GET /health — health check
  *  - GET /scanners — list available scanners
  *  - OPTIONS * — CORS preflight
+ *
+ * The CORS allow-list and the Laravel upload URL come from config.json
+ * (loaded by AgentConfig, see README.md).
  */
 public class AgentServer
 {
     private readonly AgentService _service;
     private readonly string _host;
     private readonly int _port;
+
+    // CORS allow-list, loaded from config.json (see AgentConfig). Origins are
+    // stored in canonical form (lowercase scheme/host, default port omitted)
+    // so they can be matched against browser Origin headers. Both localhost
+    // and 127.0.0.1 are listed by default because browsers treat them as
+    // distinct origins even though they resolve to the same machine.
+    private readonly string[] _allowedOrigins;
+
+    // Base URL of the SGMC Laravel application used to upload scanned
+    // documents (config.json: laravelServerUrl, see AgentConfig).
+    private readonly string _laravelServerUrl;
+
     private System.Net.HttpListener? _listener;
     private readonly object _lock = new();
-
-    // Adjust this if your Laravel APP_URL differs. Both localhost and
-    // 127.0.0.1 are listed because browsers treat them as distinct origins
-    // even though they resolve to the same machine.
-    private static readonly string[] AllowedOrigins =
-    {
-        "http://localhost:8000",
-        "http://127.0.0.1:8000",
-    };
 
     private static readonly System.Text.Json.JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
     };
 
-    public AgentServer(AgentService service, string host = "127.0.0.1", int port = 8765)
+    public AgentServer(AgentService service, AgentConfig? config, string host = "127.0.0.1", int port = 8765)
     {
         _service = service;
         _host = host;
         _port = port;
+
+        _allowedOrigins = (config?.AllowedOrigins is { Count: > 0 })
+            ? config.AllowedOrigins.ToArray()
+            : AgentConfig.DefaultAllowedOrigins.ToArray();
+
+        _laravelServerUrl = string.IsNullOrWhiteSpace(config?.LaravelServerUrl)
+            ? AgentConfig.DefaultLaravelServerUrl
+            : config!.LaravelServerUrl;
     }
 
     public void Start()
@@ -81,13 +95,38 @@ public class AgentServer
     private void ApplyCorsHeaders(System.Net.HttpListenerRequest request, System.Net.HttpListenerResponse response)
     {
         var origin = request.Headers["Origin"];
-        var allowedOrigin = (origin != null && System.Array.IndexOf(AllowedOrigins, origin) >= 0)
-            ? origin
-            : AllowedOrigins[0];
+        // Reflect the request origin back only when it is allowed; otherwise
+        // answer with the first configured origin so the browser blocks it.
+        var allowedOrigin = IsOriginAllowed(origin)
+            ? origin!.Trim().TrimEnd('/')
+            : _allowedOrigins[0];
 
         response.Headers.Add("Access-Control-Allow-Origin", allowedOrigin);
         response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
+    }
+
+    /// <summary>
+    /// An origin is allowed when its canonical form (lowercase scheme and
+    /// host, default port omitted) matches one of the configured origins.
+    /// </summary>
+    private bool IsOriginAllowed(string? origin)
+    {
+        var canonical = AgentConfig.NormalizeOrigin(origin);
+        if (canonical == null)
+        {
+            return false;
+        }
+
+        foreach (var allowed in _allowedOrigins)
+        {
+            if (string.Equals(allowed, canonical, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private async System.Threading.Tasks.Task HandleConnection(System.Net.HttpListenerContext context)
@@ -224,8 +263,8 @@ public class AgentServer
 
         var scanResult = provider.ScanAsync(scanner, scanOptions).Result;
 
-        // Upload to SGMC
-        var client = new SgmcApiClient("http://localhost:8000");
+        // Upload to SGMC (base URL from config.json, see AgentConfig)
+        var client = new SgmcApiClient(_laravelServerUrl);
         var uploadResult = client.UploadDocument(payload.JobId, payload.Token, scanResult.FilePath);
 
         // Clean up temp file

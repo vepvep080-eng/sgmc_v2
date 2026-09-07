@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Modifier ' . $user->name . ' — Bureau d\'Ordre')
-@section('page-title', 'Modifier l\'utilisateur')
+@section('page-title', __('app.edit_user_title'))
 
 @section('content')
 

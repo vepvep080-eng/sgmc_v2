@@ -56,7 +56,7 @@
 
             <nav class="flex-1 overflow-y-auto px-4 py-5 flex flex-col gap-1">
                 <p class="px-3 mb-1.5 text-[10px] font-semibold tracking-widest uppercase text-primary-700/40 dark:text-primary-100/35">
-                    Général
+                    {{ __('app.general') }}
                 </p>
 
                 <a
@@ -76,14 +76,14 @@
                     class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ease-fluent {{ request()->routeIs('courriers.*') ? 'bg-primary-500/10 text-primary-700 dark:bg-white/10 dark:text-primary-50' : 'text-primary-700/70 dark:text-primary-100/65 hover:bg-primary-500/6 dark:hover:bg-white/5' }}"
                 >
                     <x-icon name="inbox" class="w-[18px] h-[18px] {{ request()->routeIs('courriers.*') ? 'text-gold-500' : 'opacity-60' }}" />
-                    Courriers arrivés
+                    {{ __('app.incoming') }}
                 </a>
                 <a
                     href="{{ route('courriers-depart.index') }}"
                     class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ease-fluent {{ request()->routeIs('courriers-depart.*') ? 'bg-primary-500/10 text-primary-700 dark:bg-white/10 dark:text-primary-50' : 'text-primary-700/70 dark:text-primary-100/65 hover:bg-primary-500/6 dark:hover:bg-white/5' }}"
                 >
                     <x-icon name="archive" class="w-[18px] h-[18px] {{ request()->routeIs('courriers-depart.*') ? 'text-gold-500' : 'opacity-60' }}" />
-                    Courriers départ
+                    {{ __('app.outgoing') }}
                 </a>
 
                 <a
@@ -91,7 +91,7 @@
                     class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ease-fluent {{ request()->routeIs('courriers.quick-create') ? 'bg-primary-500/10 text-primary-700 dark:bg-white/10 dark:text-primary-50' : 'text-primary-700/70 dark:text-primary-100/65 hover:bg-primary-500/6 dark:hover:bg-white/5' }}"
                 >
                     <x-icon name="archive" class="w-[18px] h-[18px] {{ request()->routeIs('courriers.quick-create') ? 'text-gold-500' : 'opacity-60' }}" />
-                    Scanner un document
+                    {{ __('app.scan_a_document') }}
                 </a>
                 @can('viewAny', \App\Models\AuditLog::class)
                     <a
@@ -112,17 +112,15 @@
                     class="hidden"
                 >
                     <x-icon name="archive" class="w-[18px] h-[18px] opacity-50" />
-                    Courriers départ
-                </span><span
-                    role="link"
-                    aria-disabled="true"
-                    tabindex="-1"
-                    title="Bientôt disponible"
-                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-primary-700/35 dark:text-primary-100/25 cursor-not-allowed select-none"
-                >
-                    <x-icon name="building" class="w-[18px] h-[18px] opacity-50" />
-                    Utilisateurs
+                    {{ __('app.outgoing') }}
                 </span>
+                    <a
+                    href="{{ route('users.index') }}"
+                    class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200 ease-fluent {{ request()->routeIs('users.*') ? 'bg-primary-500/10 text-primary-700 dark:bg-white/10 dark:text-primary-50' : 'text-primary-700/70 dark:text-primary-100/65 hover:bg-primary-500/6 dark:hover:bg-white/5' }}"
+                >
+                    <x-icon name="building" class="w-[18px] h-[18px] {{ request()->routeIs('users.*') ? 'text-gold-500' : 'opacity-60' }}" />
+                    {{ __('app.users') }}
+                </a>
             </nav>
 
             <div class="px-4 py-4 border-t border-white/50 dark:border-white/10">
@@ -139,7 +137,7 @@
                     @csrf
                     <button type="submit" class="w-full flex items-center justify-center gap-2 text-xs font-semibold tracking-wide px-3.5 py-2.5 rounded-xl bg-primary-500/8 dark:bg-white/5 border border-primary-500/15 dark:border-white/10 text-primary-700/80 dark:text-primary-100/75 hover:bg-primary-500/12 dark:hover:bg-white/10 transition-colors duration-200 ease-fluent">
                         <x-icon name="logout" class="w-4 h-4" />
-                        Déconnexion
+                        {{ __('app.logout') }}
                     </button>
                 </form>
             </div>

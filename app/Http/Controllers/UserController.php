@@ -19,7 +19,7 @@ class UserController extends Controller
     {
         $this->authorize('viewAny', User::class);
 
-        $users = User::with('role')
+        $users = User::with(['role', 'service', 'section'])
             ->when($request->filled('search'), fn ($q) => $q->where(function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->string('search')}%")
                   ->orWhere('email', 'like', "%{$request->string('search')}%");

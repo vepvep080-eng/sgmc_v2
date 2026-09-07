@@ -1,0 +1,64 @@
+RAPPORT DE CORRECTIONS LOCALE 'fr' -> 'app()->getLocale()'
+================================================================
+
+Total de corrections : 14 occurrences dans 10 fichiers
+
+RÉSUMÉ PAR FICHIER :
+
+1. resources/views/courriers/index.blade.php
+   - Ligne 274 : {{ $courrier->date_reception?->locale(app()->getLocale())->translatedFormat('d F Y') ?? '—' }}
+   - Avant : locale('fr')
+
+2. resources/views/courriers/pdf/show.blade.php
+   - Ligne 38 : <p class="meta">Générée le {{ $generatedAt->locale(app()->getLocale())->translatedFormat('d F Y') }} &agrave; {{ $generatedAt->format('H:i') }}</p>
+   - Avant : locale('fr')
+
+3. resources/views/outgoing-courriers/show.blade.php
+   - Ligne 16 : {{ $courrier->date_envoi?->locale(app()->getLocale())->translatedFormat('d F Y') }}
+   - Avant : locale('fr')
+   - Ligne 34 : {{ $auditLog->created_at->locale(app()->getLocale())->translatedFormat('d/m/Y H:i') }}
+   - Avant : locale('fr')
+
+4. resources/views/courriers/show.blade.php
+   - Ligne 74 : {{ $courrier->date_reception?->locale(app()->getLocale())->translatedFormat('d F Y') ?? '—' }}
+   - Avant : locale('fr')
+   - Ligne 124 : Créé le {{ $courrier->created_at->locale(app()->getLocale())->translatedFormat('d F Y à H:i') }}
+   - Avant : locale('fr')
+   - Ligne 126 : · Modifié le {{ $courrier->updated_at->locale(app()->getLocale())->translatedFormat('d F Y à H:i') }}
+   - Avant : locale('fr')
+
+5. resources/views/courriers/pdf/index.blade.php
+   - Ligne 40 : <p class="meta">Généré le {{ $generatedAt->locale(app()->getLocale())->translatedFormat('d F Y à H:i') }}</p>
+   - Avant : locale('fr')
+   - Ligne 66 : {{ $courrier->date_reception?->locale(app()->getLocale())->translatedFormat('d/m/Y') ?? '—' }}
+   - Avant : locale('fr')
+
+6. resources/views/courriers/_audit_history.blade.php
+   - Ligne 10 : {{ $auditLog->created_at->locale(app()->getLocale())->translatedFormat('d/m/Y H:i') }}
+   - Avant : locale('fr')
+
+7. resources/views/notifications/index.blade.php
+   - Ligne 23 : {{ $notification->created_at->locale(app()->getLocale())->translatedFormat('d F Y à H:i') }}
+   - Avant : locale('fr')
+
+8. resources/views/courriers/_routing_timeline.blade.php
+   - Ligne 413 : {{ $event['at']?->locale(app()->getLocale())->translatedFormat('d F Y à H:i') ?? '—' }}
+   - Avant : locale('fr')
+
+9. resources/views/courriers/print/index.blade.php
+   - Ligne 41 : <p class="meta">Généré le {{ $generatedAt->locale(app()->getLocale())->translatedFormat('d F Y') }} &agrave; {{ $generatedAt->format('H:i') }}</p>
+   - Avant : locale('fr')
+
+10. resources/views/courriers/print/show.blade.php
+    - Ligne 38 : <p class="meta">Fiche du courrier - g&eacute;n&eacute;r&eacute;e le {{ $generatedAt->locale(app()->getLocale())->translatedFormat('d F Y') }} &agrave; {{ $generatedAt->format('H:i') }}</p>
+    - Avant : locale('fr')
+
+RÉSULTATS DES TESTS :
+- php artisan test : 64/64 passing (264 assertions)
+- php artisan test --filter=Localization : 5/5 passing
+
+CONFIRMATION :
+- Aucune fichier n'a été supprimé
+- Aucune traduction existante n'a été modifiée (seul passage de locale('fr') à locale(app()->getLocale()))
+- Aucun code métier n'a été modifié
+- La parité des clés de traduction ar/fr est préservée

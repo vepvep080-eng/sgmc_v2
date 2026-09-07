@@ -1,0 +1,8 @@
+# Dépendances
+node_modules/
+
+# Sorties electron-builder
+dist/
+
+# Divers
+*.log

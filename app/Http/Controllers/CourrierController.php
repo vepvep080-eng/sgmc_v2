@@ -20,7 +20,6 @@ use Illuminate\View\View;
 
 class CourrierController extends Controller
 {
-
     public function __construct()
     {
         $this->authorizeResource(Courrier::class, 'courrier');
@@ -153,12 +152,24 @@ class CourrierController extends Controller
 
     public function destroy(Courrier $courrier): RedirectResponse
     {
+        $numero = $courrier->numero;
+
+        try {
+            $courrier->delete();
+        } catch (QueryException $exception) {
+            if (str_contains($exception->getMessage(), 'FOREIGN KEY constraint failed')
+                || str_contains($exception->getMessage(), 'foreign key constraint fails')) {
+                return redirect()
+                    ->route('courriers.show', $courrier)
+                    ->with('error', "Impossible de supprimer le courrier {$numero} : il possède un historique de numérisation (scan). Ce courrier doit être archivé plutôt que supprimé.");
+            }
+
+            throw $exception;
+        }
+
         if ($courrier->piece_jointe) {
             Storage::disk('public')->delete($courrier->piece_jointe);
         }
-
-        $numero = $courrier->numero;
-        $courrier->delete();
 
         return redirect()
             ->route('courriers.index')

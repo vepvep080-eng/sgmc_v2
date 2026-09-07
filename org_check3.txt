@@ -1,0 +1,6 @@
+[
+    {
+        "code": "PT-MOYENNES",
+        "name": "مprise des patrémes et des affaires sociales والثقافة والرياضة"
+    }
+]

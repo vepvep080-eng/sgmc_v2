@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'; img-src 'self' file:">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGMC — Configuration du serveur</title>
+    <link rel="stylesheet" href="config-screen.css">
+</head>
+<body>
+    <main class="card">
+        <div class="brand">
+            <img class="brand-icon" src="../build/icon.png" alt="Logo SGMC">
+            <h1>SGMC</h1>
+        </div>
+        <p class="subtitle">Bureau d'Ordre — Commune de Jerada</p>
+
+        <p class="intro">
+            Indiquez l'adresse du serveur SGMC installé sur votre réseau local.
+            Elle n'est demandée qu'une seule fois et pourra être modifiée via le
+            menu <strong>Fichier → Configurer le serveur…</strong>.
+        </p>
+
+        <form id="config-form" novalidate>
+            <label for="server-url">Adresse du serveur</label>
+            <input
+                id="server-url"
+                name="server-url"
+                type="text"
+                inputmode="url"
+                autocomplete="off"
+                spellcheck="false"
+                placeholder="ex. http://192.168.1.10:8000"
+                autofocus
+            >
+            <p class="error hidden" id="error" role="alert"></p>
+
+            <button type="button" class="btn btn-secondary" id="test-btn">Tester la connexion</button>
+            <p class="status hidden" id="status" role="status"></p>
+
+            <button type="submit" class="btn btn-primary" id="save-btn">Enregistrer et continuer</button>
+        </form>
+
+        <footer class="footnote">
+            L'adresse peut également être imposée par la variable d'environnement
+            <code>SGMC_SERVER_URL</code> ou l'argument <code>--server-url=…</code>.
+        </footer>
+    </main>
+
+    <script src="config-screen.js"></script>
+</body>
+</html>

@@ -283,6 +283,26 @@ class Courrier extends Model
             return $query->where('assigned_user_id', $user->id);
         }
 
+        if ($user->hasRole(Role::CHEF_DEPARTEMENT)) {
+            $department = Department::where('manager_id', $user->id)->first();
+
+            if ($department === null) {
+                return $query->whereNull('courriers.id');
+            }
+
+            $serviceIds = $department->services()->pluck('id');
+
+            return $query->where(function ($q) use ($serviceIds, $department) {
+                // Cas A : déjà rattaché à un service de mon département
+                $q->whereIn('service_id', $serviceIds)
+                    // Cas B : en attente de sous-routage au niveau de mon département
+                    ->orWhereHas('currentRouting', function ($r) use ($department) {
+                        $r->where('department_id', $department->id)
+                          ->whereNull('service_destination_id');
+                    });
+            });
+        }
+
         return $query->whereNull('courriers.id');
     }
 }

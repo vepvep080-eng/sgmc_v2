@@ -50,11 +50,11 @@ class DashboardMetricsService
                 'par_service' => $this->courriersParService($courriers),
                 'par_statut' => [
                     'labels' => [
-                        'Nouveau',
-                        'En attente',
-                        'En cours',
-                        'Traité',
-                        'Archivé',
+                        __('app.statuses.nouveau'),
+                        __('app.pending'),
+                        __('app.statuses.en_cours'),
+                        __('app.statuses.traite'),
+                        __('app.statuses.archive'),
                     ],
                     'data' => [
                         $nouveauxCourriers->count(),
@@ -66,10 +66,10 @@ class DashboardMetricsService
                 ],
                 'par_priorite' => [
                     'labels' => [
-                        'Faible',
-                        'Normale',
-                        'Urgente',
-                        'Très urgente',
+                        __('app.priorities.faible'),
+                        __('app.priorities.normale'),
+                        __('app.priorities.urgente'),
+                        __('app.priorities.tres_urgente'),
                     ],
                     'data' => [
                         0,
@@ -103,7 +103,7 @@ class DashboardMetricsService
 
         return [
             'labels' => $months
-                ->map(fn ($month) => $month->locale('fr')->translatedFormat('M Y'))
+                ->map(fn ($month) => $month->locale(app()->getLocale())->translatedFormat('M Y'))
                 ->all(),
             'data' => $months
                 ->map(fn ($month) => $countsByMonth->get($month->format('Y-m'), 0))

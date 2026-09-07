@@ -37,7 +37,7 @@
             <td style="border: 0; padding: 0; background: transparent;">
                 <div class="heading">
                     <h1>Liste des courriers</h1>
-                    <p class="meta">Généré le {{ $generatedAt->locale('fr')->translatedFormat('d F Y à H:i') }}</p>
+                    <p class="meta">Généré le {{ $generatedAt->locale(app()->getLocale())->translatedFormat('d F Y à H:i') }}</p>
                     <p class="meta">Par : {{ $generatedBy->name }}</p>
                 </div>
             </td>
@@ -63,7 +63,7 @@
                     <td>{{ $courrier->objet }}</td>
                     <td>{{ $courrier->expediteur }}</td>
                     <td>{{ $courrier->service?->name ?? '—' }}</td>
-                    <td>{{ $courrier->date_reception?->locale('fr')->translatedFormat('d/m/Y') ?? '—' }}</td>
+                    <td>{{ $courrier->date_reception?->locale(app()->getLocale())->translatedFormat('d/m/Y') ?? '—' }}</td>
                     <td>{{ $courrier->priorityLabel() }}</td>
                     <td>{{ $courrier->statusLabel() }}</td>
                 </tr>

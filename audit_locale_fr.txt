@@ -1,0 +1,38 @@
+AUDIT DES OCCURRENCES DE locale('fr') DANS LES VUES BLADE
+=============================================================
+
+Total trouvé : 14 occurrences dans 10 fichiers différents
+
+1. resources/views/courriers/index.blade.php
+   Ligne 274: {{ $courrier->date_reception?->locale('fr')->translatedFormat('d F Y') ?? '—' }}
+
+2. resources/views/courriers/pdf/show.blade.php
+   Ligne 38: <p class="meta">Générée le {{ $generatedAt->locale('fr')->translatedFormat('d F Y') }} &agrave; {{ $generatedAt->format('H:i') }}</p>
+
+3. resources/views/outgoing-courriers/show.blade.php
+   Ligne 16: <div>...<dt class="text-xs text-primary-700/50">Date d'envoi</dt><dd class="mt-1 text-primary-800 dark:text-primary-50">{{ $courrier->date_envoi?->locale('fr')->translatedFormat('d F Y') }}</dd>...</div>
+   Ligne 34: <span class="text-xs text-primary-700/50 dark:text-primary-100/40">{{ $auditLog->created_at->locale('fr')->translatedFormat('d/m/Y H:i') }}</span>
+
+4. resources/views/courriers/show.blade.php
+   Ligne 74: <dd class="mt-1 text-sm text-primary-800 dark:text-primary-50">{{ $courrier->date_reception?->locale('fr')->translatedFormat('d F Y') ?? '—' }}</dd>
+   Ligne 124: Créé le {{ $courrier->created_at->locale('fr')->translatedFormat('d F Y à H:i') }}
+   Ligne 126: · Modifié le {{ $courrier->updated_at->locale('fr')->translatedFormat('d F Y à H:i') }}
+
+5. resources/views/courriers/pdf/index.blade.php
+   Ligne 40: <p class="meta">Généré le {{ $generatedAt->locale('fr')->translatedFormat('d F Y à H:i') }}</p>
+   Ligne 66: <td>{{ $courrier->date_reception?->locale('fr')->translatedFormat('d/m/Y') ?? '—' }}</td>
+
+6. resources/views/courriers/_audit_history.blade.php
+   Ligne 10: <p class="text-xs text-primary-700/50 dark:text-primary-100/40">{{ $auditLog->created_at->locale('fr')->translatedFormat('d/m/Y H:i') }}</p>
+
+7. resources/views/notifications/index.blade.php
+   Ligne 23: <p class="mt-1.5 text-xs text-primary-700/45 dark:text-primary-100/35">{{ $notification->created_at->locale('fr')->translatedFormat('d F Y à H:i') }}</p>
+
+8. resources/views/courriers/_routing_timeline.blade.php
+   Ligne 413: {{ $event['at']?->locale('fr')->translatedFormat('d F Y à H:i') ?? '—' }}
+
+9. resources/views/courriers/print/index.blade.php
+   Ligne 41: <p class="meta">Généré le {{ $generatedAt->locale('fr')->translatedFormat('d F Y') }} &agrave; {{ $generatedAt->format('H:i') }}</p>
+
+10. resources/views/courriers/print/show.blade.php
+    Ligne 38: <p class="meta">Fiche du courrier - g&eacute;n&eacute;r&eacute;e le {{ $generatedAt->locale('fr')->translatedFormat('d F Y') }} &agrave; {{ $generatedAt->format('H:i') }}</p>

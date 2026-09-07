@@ -15,31 +15,62 @@ class RoutingController extends Controller
     public function store(StoreRoutingRequest $request, Courrier $courrier): RedirectResponse
     {
         DB::transaction(function () use ($request, $courrier) {
-            $newServiceId = (int) $request->validated('service_destination_id');
+            $departmentId = $request->integer('department_id');
+            $serviceId = $request->integer('service_destination_id');
 
-            Routing::create([
-                'courrier_id' => $courrier->id,
-                'service_source_id' => $courrier->service_id,
-                'service_destination_id' => $newServiceId,
-                'section_destination_id' => $request->validated('section_destination_id'),
-                'recipient_user_id' => $request->validated('recipient_user_id'),
-                'routed_by' => $request->user()->id,
-                'statut' => Routing::STATUT_EN_ATTENTE,
-                'sent_at' => now(),
-                'commentaire' => $request->validated('commentaire'),
-            ]);
+            // Cas B : CHEF_DEPARTEMENT - routage en attente de sous-routage (department_id uniquement)
+            if ($request->user()->hasRole(\App\Models\Role::CHEF_DEPARTEMENT) && $departmentId && !$serviceId) {
+                $newServiceId = null;
+                $recipientUserId = $request->integer('recipient_user_id');
 
-            $courrier->update([
-                'service_id' => $newServiceId,
-                'section_id' => $request->validated('section_destination_id'),
-                'assigned_user_id' => $request->validated('recipient_user_id'),
-                'statut' => 'nouveau',
-            ]);
+                Routing::create([
+                    'courrier_id' => $courrier->id,
+                    'service_source_id' => $courrier->service_id,
+                    'department_id' => $departmentId,
+                    'service_destination_id' => null,
+                    'section_destination_id' => $request->integer('section_destination_id'),
+                    'recipient_user_id' => $recipientUserId,
+                    'routed_by' => $request->user()->id,
+                    'statut' => Routing::STATUT_EN_ATTENTE,
+                    'sent_at' => now(),
+                    'commentaire' => $request->validated('commentaire'),
+                ]);
+
+                $courrier->update([
+                    'service_id' => null,
+                    'section_id' => $request->integer('section_destination_id'),
+                    'assigned_user_id' => $recipientUserId,
+                    'statut' => 'en_attente_de_sous_routage',
+                ]);
+            }
+            // Cas A : service_destination_id fourni (comportement existant ou étape 2)
+            else {
+                $newServiceId = (int) $request->validated('service_destination_id');
+
+                Routing::create([
+                    'courrier_id' => $courrier->id,
+                    'service_source_id' => $courrier->service_id,
+                    'service_destination_id' => $newServiceId,
+                    'section_destination_id' => $request->validated('section_destination_id'),
+                    'recipient_user_id' => $request->validated('recipient_user_id'),
+                    'routed_by' => $request->user()->id,
+                    'statut' => Routing::STATUT_EN_ATTENTE,
+                    'sent_at' => now(),
+                    'commentaire' => $request->validated('commentaire'),
+                ]);
+
+                $courrier->update([
+                    'service_id' => $newServiceId,
+                    'section_id' => $request->validated('section_destination_id'),
+                    'assigned_user_id' => $request->validated('recipient_user_id'),
+                    'statut' => 'nouveau',
+                ]);
+            }
         });
 
         return redirect()
             ->route('courriers.show', $courrier)
-            ->with('success', 'Le courrier a été routé vers le service sélectionné.');
+            ->with('success', 'Le routage a été effectué avec succès.');
     }
 
     public function accept(Routing $routing): RedirectResponse

@@ -1,0 +1,33 @@
+AUDIT DES FICHIERS PHP - Chaînes et encodage
+==============================================
+
+1. app/Services/DashboardMetricsService.php :
+   - Toutes les labels de graphiques utilisent __('app.statuses.xxx') et __('app.priorities.xxx') ✅
+   - Ligne 106 utilise locale(app()->getLocale()) ✅
+   - Aucun texte hardcodé anglais ou français détecté ✅
+
+2. app/Http/Controllers/AuthController.php :
+   - Ligne 25 : Message dur 'Les identifiants fournis ne correspondent à aucun compte.' en français ✅
+   - Message en français (langue autorisée), pas d'anglais
+
+3. app/Http/Requests/StoreUserRequest.php :
+   - Ligne 56 : Message validation en français 'Un service doit être sélectionné pour un Chef de Service.' ✅
+   - Méthode attributes() utilise libellés français : 'nom', 'adresse e-mail', etc. ✅
+
+4. database/seeders/*.php :
+   - JeradaOrganigrammeSeeder.php : Tous les noms en arabe ✅
+   - ServiceSeeder.php : Noms en français ✅
+   - DepartmentSeeder.php : 'Direction Générale' en français ✅
+   - RolesAndPermissionsSeeder.php : Tous les rôles et permissions en français ✅
+   - Aucun texte anglais détecté ✅
+
+5. app/Http/Requests/ :
+   - Aucun texte hardcodé anglais détecté
+   - Messages de validation et attributes() en français
+
+RÉSULTATS PHP :
+- DashboardMetricsService.php : ⚠️ Utilise locale(app()->getLocale()) ✅ (correct)
+- AuthController.php : Message dur en français (acceptable)
+- StoreUserRequest.php : Messages en français / labels en français ✅
+- Seeders : Tous en français ou arabe ✅
+- Aucun texte anglais hardcodé détecté dans les fichiers PHP analysés

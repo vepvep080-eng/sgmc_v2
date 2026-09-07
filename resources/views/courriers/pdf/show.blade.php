@@ -35,7 +35,7 @@
             <td style="border: 0; padding: 0;">
                 <div class="heading">
                     <h1>Fiche du courrier</h1>
-                    <p class="meta">G&eacute;n&eacute;r&eacute;e le {{ $generatedAt->locale('fr')->translatedFormat('d F Y') }} &agrave; {{ $generatedAt->format('H:i') }}</p>
+                    <p class="meta">G&eacute;n&eacute;r&eacute;e le {{ $generatedAt->locale(app()->getLocale())->translatedFormat('d F Y') }} &agrave; {{ $generatedAt->format('H:i') }}</p>
                 </div>
             </td>
         </tr>

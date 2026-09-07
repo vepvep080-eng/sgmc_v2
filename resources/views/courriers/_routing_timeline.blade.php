@@ -410,7 +410,7 @@
                         </div>
 
                         <p class="mt-1 text-xs text-primary-700/55 dark:text-primary-100/45">
-                            {{ $event['at']?->locale('fr')->translatedFormat('d F Y à H:i') ?? '—' }}
+                            {{ $event['at']?->locale(app()->getLocale())->translatedFormat('d F Y à H:i') ?? '—' }}
                         </p>
                     </div>
                 </div>

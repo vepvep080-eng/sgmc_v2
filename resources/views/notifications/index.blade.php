@@ -20,7 +20,7 @@
                 <div class="min-w-0 flex-1">
                     <a href="{{ $notification->data['url'] ?? route('dashboard') }}" class="block text-sm font-semibold text-primary-800 transition-colors hover:text-gold-600 dark:text-primary-50 dark:hover:text-gold-400">{{ $notification->data['title'] ?? 'Notification' }}</a>
                     <p class="mt-1 text-sm text-primary-700/65 dark:text-primary-100/55">{{ $notification->data['message'] ?? '' }}</p>
-                    <p class="mt-1.5 text-xs text-primary-700/45 dark:text-primary-100/35">{{ $notification->created_at->locale('fr')->translatedFormat('d F Y à H:i') }}</p>
+                    <p class="mt-1.5 text-xs text-primary-700/45 dark:text-primary-100/35">{{ $notification->created_at->locale(app()->getLocale())->translatedFormat('d F Y à H:i') }}</p>
                 </div>
                 @if (! $notification->read_at)
                     <form method="POST" action="{{ route('notifications.read', $notification) }}">

@@ -1,0 +1,12 @@
+Only in AR (deep):
+outgoing_mail
+priorities.faible
+numero_auto_description
+attachment
+remove
+click_to_choose_file
+or_drag_it_here
+field_service_placeholder
+field_attachment_hint
+
+Only in FR (deep):

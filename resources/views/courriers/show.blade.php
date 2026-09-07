@@ -71,7 +71,7 @@
             </div>
             <div>
                 <dt class="text-xs font-medium tracking-wide text-primary-700/50 dark:text-primary-100/40">Date de réception</dt>
-                <dd class="mt-1 text-sm text-primary-800 dark:text-primary-50">{{ $courrier->date_reception?->locale('fr')->translatedFormat('d F Y') ?? '—' }}</dd>
+                <dd class="mt-1 text-sm text-primary-800 dark:text-primary-50">{{ $courrier->date_reception?->locale(app()->getLocale())->translatedFormat('d F Y') ?? '—' }}</dd>
             </div>
             <div>
                 <dt class="text-xs font-medium tracking-wide text-primary-700/50 dark:text-primary-100/40">Référence</dt>
@@ -121,9 +121,9 @@
         </div>
 
         <p class="mt-8 pt-5 border-t border-white/50 dark:border-white/10 text-xs text-primary-700/45 dark:text-primary-100/35">
-            Créé le {{ $courrier->created_at->locale('fr')->translatedFormat('d F Y à H:i') }}
+            Créé le {{ $courrier->created_at->locale(app()->getLocale())->translatedFormat('d F Y à H:i') }}
             @if ($courrier->updated_at->ne($courrier->created_at))
-                · Modifié le {{ $courrier->updated_at->locale('fr')->translatedFormat('d F Y à H:i') }}
+                · Modifié le {{ $courrier->updated_at->locale(app()->getLocale())->translatedFormat('d F Y à H:i') }}
             @endif
         </p>
     </div>
@@ -160,33 +160,60 @@
         @endpush
     @endcan
 
-    @can('redirect', \App\Models\Routing::class)
+@can('redirect', \App\Models\Routing::class)
         <section class="mt-6 rounded-[24px] border border-white/70 bg-white/55 p-6 dark:border-white/10 dark:bg-white/[0.05]">
             <h2 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">توجيه المراسلة</h2>
+            
+            <!-- Affichage de l'état de routage -->
+            @if ($courrier->currentRouting && $courrier->currentRouting->department_id && is_null($courrier->currentRouting->service_destination_id))
+                <div class="mb-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-400/30">
+                    <p class="font-medium text-amber-800 dark:text-amber-300 mb-1">
+                        {{ __('app.status.pending_department_routing') }}
+                    </p>
+                    <p class="text-sm text-amber-700/80 dark:text-amber-200">
+                        {{ __('app.status.pending_department_routing_description', ['department' => $courrier->currentRouting->department->name]) }}
+                    </p>
+                </div>
+            @endif
+            
             <form method="POST" action="{{ route('courriers.routings.store', $courrier) }}" class="mt-5 grid gap-4 sm:grid-cols-3">
                 @csrf
+                
+                <!-- Département -->
                 <div>
                     <label for="department_id" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.department') }}</label>
                     <select id="department_id" name="department_id" class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50">
                         <option value="">{{ __('app.no_department') }}</option>
                         @foreach($departments as $department)
-                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            <option value="{{ $department->id }}" {{ $courrier->currentRouting && $courrier->currentRouting->department_id == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
                         @endforeach
                     </select>
                 </div>
+                
+                <!-- Service destination -->
                 <div>
                     <label for="service_destination_id" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.service') }}</label>
                     <select id="service_destination_id" name="service_destination_id" required class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50">
                         @foreach($departments as $department)
                             <optgroup label="{{ $department->name }}">
                                 @foreach($department->services as $service)
-                                    <option value="{{ $service->id }}" data-department="{{ $department->id }}">{{ $service->name }}</option>
+                                    @if ($courrier->currentRouting && is_null($courrier->currentRouting->service_destination_id))
+                                        <!-- Mode attente : service grisé si déjà rattaché à ce département -->
+                                        @if ($courrier->currentRouting->department_id == $department->id)
+                                            <option value="{{ $service->id }}" data-department="{{ $department->id }}" disabled>{{ $service->name }}</option>
+                                        @else
+                                            <option value="{{ $service->id }}" data-department="{{ $department->id }}">{{ $service->name }}</option>
+                                        @endif
+                                    @else
+                                        <option value="{{ $service->id }}" data-department="{{ $department->id }}">{{ $service->name }}</option>
+                                    @endif
                                 @endforeach
                             </optgroup>
                         @endforeach
                     </select>
                     @error('service_destination_id')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
                 </div>
+                
                 <div>
                     <label for="recipient_user_id" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.manager') }}</label>
                     <select id="recipient_user_id" name="recipient_user_id" class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50">
@@ -197,7 +224,7 @@
                     </select>
                     @error('recipient_user_id')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
                 </div>
-                <div class="sm:col-span-3">
+                <div>
                     <label for="commentaire" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.description') }}</label>
                     <textarea
                         id="commentaire"
@@ -206,7 +233,13 @@
                     ></textarea>
                 </div>
                 <div class="sm:col-span-3">
-                    <button class="rounded-xl bg-primary-500 px-4 py-2 text-white">توجيه</button>
+                    <button type="submit" class="rounded-xl bg-primary-500 px-4 py-2 text-white">
+                        @if ($courrier->currentRouting && is_null($courrier->currentRouting->service_destination_id))
+                            Terminer le routage
+                        @else
+                            Rouler
+                        @endif
+                    </button>
                 </div>
             </form>
         </section>

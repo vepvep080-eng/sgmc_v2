@@ -18,6 +18,7 @@ class Role extends Model
     public const BUREAU_ORDRE = 'bureau_ordre';
     public const CHEF_SERVICE = 'chef_service';
     public const CHEF_SECTION = 'chef_section';
+    public const CHEF_DEPARTEMENT = 'chef_departement';
     public const EMPLOYEE = 'employe';
     public const READ_ONLY = 'read_only';
 

@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
         // service left without a department_id to a default department.
         $this->call(ServiceSeeder::class);
         $this->call(DepartmentSeeder::class);
+        $this->call(JeradaOrganigrammeSeeder::class);
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',

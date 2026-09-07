@@ -1,0 +1,76 @@
+/* SGMC Shell — écran « serveur injoignable ». Palette identique à l'application. */
+
+:root {
+    --primary: #0B3D91;
+    --primary-dark: #082C6B;
+    --gold: #D4AF37;
+    --text: #16233B;
+    --muted: #5B6B85;
+    --danger: #C0392B;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(900px 420px at 15% -10%, rgba(212, 175, 55, 0.20), transparent 55%),
+        linear-gradient(160deg, var(--primary) 0%, var(--primary-dark) 100%);
+}
+
+.card {
+    width: 100%;
+    max-width: 460px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 16px;
+    padding: 30px 26px;
+    box-shadow: 0 24px 60px rgba(4, 18, 45, 0.45);
+}
+
+.icon { width: 76px; height: 76px; margin: 0 auto 10px; display: block; }
+
+h1 { font-size: 21px; color: var(--primary); margin-bottom: 10px; }
+
+.reason { color: var(--danger); font-weight: 600; font-size: 13px; margin-bottom: 8px; }
+
+.target { font-size: 12.5px; color: var(--muted); }
+.target code {
+    background: #EEF2F9;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    word-break: break-all;
+}
+
+.hint {
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 14px 0 6px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    padding: 11px 14px;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.05s ease;
+}
+.btn:hover { filter: brightness(1.07); }
+.btn:active { transform: translateY(1px); }
+
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-secondary { background: #E8EDF6; color: var(--primary); }

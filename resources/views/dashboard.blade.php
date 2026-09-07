@@ -10,14 +10,14 @@
                 {{ __('app.welcome', ['name' => Auth::user()->name]) }}
             </h2>
             <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/50">
-                Aperçu en temps réel de l'activité du Bureau d'Ordre.
+                {{ __('app.dashboard_summary') }}
             </p>
         </div>
 
         @can('create', \App\Models\Courrier::class)
             <a href="{{ route('courriers.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_24px_-8px_rgba(11,61,145,0.45)] transition-transform duration-200 ease-fluent hover:scale-[1.02]">
                 <x-icon name="plus-simple" class="w-4 h-4" />
-                Ajouter un courrier
+                {{ __('app.dashboard_add_mail') }}
             </a>
         @endcan
     </div>
@@ -27,8 +27,8 @@
         <x-stat-card icon="plus" :label="__('app.new')" :value="$statistics['nouveaux']" accent="gold" />
         <x-stat-card icon="clock" :label="__('app.pending')" :value="$statistics['en_attente']" accent="gold" />
         <x-stat-card icon="refresh" :label="__('app.in_progress')" :value="$statistics['en_cours']" accent="secondary" />
-        <x-stat-card icon="check-circle" label="Traités" :value="$statistics['traites']" accent="secondary" />
-        <x-stat-card icon="archive" label="Archivés" :value="$statistics['archives']" accent="primary" />
+        <x-stat-card icon="check-circle" :label="__('app.stat_processed')" :value="$statistics['traites']" accent="secondary" />
+        <x-stat-card icon="archive" :label="__('app.stat_archived')" :value="$statistics['archives']" accent="primary" />
     </div>
 
     <div
@@ -41,14 +41,14 @@
             <div class="absolute left-8 top-0 h-[2px] w-16 rounded-full bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
 
             <h3 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">
-                Courriers par mois
+                {{ __('app.chart_by_month_title') }}
             </h3>
             <p class="mt-1 text-xs text-primary-700/55 dark:text-primary-100/45">
-                Évolution des réceptions sur les douze derniers mois.
+                {{ __('app.chart_by_month_description') }}
             </p>
 
             <div class="mt-6 h-72">
-                <canvas id="courriers-par-mois-chart" aria-label="Évolution mensuelle des courriers" role="img"></canvas>
+                <canvas id="courriers-par-mois-chart" aria-label="{{ __('app.chart_by_month_aria') }}" role="img"></canvas>
             </div>
         </section>
 
@@ -56,14 +56,14 @@
             <div class="absolute left-8 top-0 h-[2px] w-16 rounded-full bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
 
             <h3 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">
-                Courriers par service
+                {{ __('app.chart_by_service_title') }}
             </h3>
             <p class="mt-1 text-xs text-primary-700/55 dark:text-primary-100/45">
-                Répartition des courriers par service destinataire.
+                {{ __('app.chart_by_service_description') }}
             </p>
 
             <div class="mt-6 h-72">
-                <canvas id="courriers-par-service-chart" aria-label="Répartition des courriers par service" role="img"></canvas>
+                <canvas id="courriers-par-service-chart" aria-label="{{ __('app.chart_by_service_aria') }}" role="img"></canvas>
             </div>
         </section>
 
@@ -71,14 +71,14 @@
             <div class="absolute left-8 top-0 h-[2px] w-16 rounded-full bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
 
             <h3 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">
-                Répartition par statut
+                {{ __('app.chart_by_status_title') }}
             </h3>
             <p class="mt-1 text-xs text-primary-700/55 dark:text-primary-100/45">
-                Situation actuelle des courriers visibles.
+                {{ __('app.chart_by_status_description') }}
             </p>
 
             <div class="mt-6 h-72">
-                <canvas id="repartition-statut-chart" aria-label="Répartition des courriers par statut" role="img"></canvas>
+                <canvas id="repartition-statut-chart" aria-label="{{ __('app.chart_by_status_aria') }}" role="img"></canvas>
             </div>
         </section>
 
@@ -86,14 +86,14 @@
             <div class="absolute left-8 top-0 h-[2px] w-16 rounded-full bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
 
             <h3 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">
-                Répartition par priorité
+                {{ __('app.chart_by_priority_title') }}
             </h3>
             <p class="mt-1 text-xs text-primary-700/55 dark:text-primary-100/45">
-                Niveau de priorité des courriers visibles.
+                {{ __('app.chart_by_priority_description') }}
             </p>
 
             <div class="mt-6 h-72">
-                <canvas id="repartition-priorite-chart" aria-label="Répartition des courriers par priorité" role="img"></canvas>
+                <canvas id="repartition-priorite-chart" aria-label="{{ __('app.chart_by_priority_aria') }}" role="img"></canvas>
             </div>
         </section>
     </div>
@@ -104,25 +104,25 @@
 
             <div class="flex items-center justify-between border-b border-white/50 px-6 py-5 dark:border-white/10 sm:px-8">
                 <h3 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">
-                    Courriers récemment ajoutés
+                    {{ __('app.recent_mail_section_title') }}
                 </h3>
 
                 <a href="{{ route('courriers.index') }}" class="text-xs font-semibold tracking-wide text-primary-600 transition-colors duration-200 ease-fluent hover:text-gold-600 dark:text-primary-200 dark:hover:text-gold-400">
-                    Voir tout →
+                    {{ __('app.view_all_arrow') }}
                 </a>
             </div>
 
             @if ($recentCourriers->isEmpty())
                 <x-empty-state
                     icon="inbox"
-                    title="Aucun courrier pour le moment"
-                    description="Les courriers que vous ajoutez apparaîtront ici."
+                    :title="__('app.no_mail')"
+                    :description="__('app.no_mail_description')"
                 >
                     @can('create', \App\Models\Courrier::class)
                         <x-slot:action>
                             <a href="{{ route('courriers.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_10px_24px_-8px_rgba(11,61,145,0.45)] transition-transform duration-200 ease-fluent hover:scale-[1.02]">
                                 <x-icon name="plus-simple" class="w-4 h-4" />
-                                Ajouter un courrier
+                                {{ __('app.dashboard_add_mail') }}
                             </a>
                         </x-slot:action>
                     @endcan
@@ -150,7 +150,7 @@
                                 </x-badge>
 
                                 <span class="hidden tabular-nums text-xs text-primary-700/45 dark:text-primary-100/35 sm:block">
-                                    {{ $courrier->date_reception?->locale('fr')->translatedFormat('d F Y') ?? '—' }}
+                                    {{ $courrier->date_reception?->locale(app()->getLocale())->translatedFormat('d F Y') ?? '—' }}
                                 </span>
                             </a>
                         </li>

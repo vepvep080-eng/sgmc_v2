@@ -38,7 +38,7 @@
             <img src="{{ asset('assets/commune-jerada.jpg') }}" alt="Logo de la Commune" class="logo">
             <div>
                 <h1>Liste des courriers</h1>
-                <p class="meta">G&eacute;n&eacute;r&eacute; le {{ $generatedAt->locale('fr')->translatedFormat('d F Y') }} &agrave; {{ $generatedAt->format('H:i') }}</p>
+                <p class="meta">G&eacute;n&eacute;r&eacute; le {{ $generatedAt->locale(app()->getLocale())->translatedFormat('d F Y') }} &agrave; {{ $generatedAt->format('H:i') }}</p>
             </div>
         </header>
 

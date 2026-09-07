@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Nouvel utilisateur — Bureau d\'Ordre')
-@section('page-title', 'Nouvel utilisateur')
+@section('page-title', __('app.user_creation_title'))
 
 @section('content')
 

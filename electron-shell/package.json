@@ -1,0 +1,53 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "name": "sgmc-shell",
+    "productName": "SGMC",
+    "version": "1.0.0",
+    "description": "Shell Electron de SGMC (Bureau d'Ordre - Commune de Jerada) : fenêtre pointant vers le serveur Laravel central.",
+    "main": "main.js",
+    "author": "Commune de Jerada",
+    "license": "MIT",
+    "private": true,
+    "scripts": {
+        "start": "electron .",
+        "dist": "electron-builder --win"
+    },
+    "devDependencies": {
+        "electron": "^44.1.0",
+        "electron-builder": "^26.15.3"
+    },
+    "build": {
+        "appId": "ma.communejerada.sgmc",
+        "productName": "SGMC",
+        "copyright": "Copyright © 2026 Commune de Jerada",
+        "directories": {
+            "output": "dist",
+            "buildResources": "build"
+        },
+        "files": [
+            "main.js",
+            "config.js",
+            "preload/**/*",
+            "screens/**/*",
+            "build/icon.png"
+        ],
+        "win": {
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": ["x64"]
+                }
+            ],
+            "icon": "build/icon.png"
+        },
+        "nsis": {
+            "oneClick": false,
+            "perMachine": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "SGMC",
+            "artifactName": "SGMC-Setup-${version}.${ext}"
+        }
+    }
+}

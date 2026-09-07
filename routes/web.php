@@ -33,7 +33,7 @@ Route::get('/language/{locale}', [LocalizationController::class, 'update'])
 
 Route::middleware('guest')->group(function () {
     Route::view('/login', 'auth.login')->name('login');
-    Route::post('/login', [AuthController::class, 'store']);
+    Route::post('/login', [AuthController::class, 'store'])->middleware('throttle:5,1');
 });
 
 Route::middleware(['auth', 'active'])->group(function () {

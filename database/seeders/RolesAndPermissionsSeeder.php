@@ -62,6 +62,15 @@ class RolesAndPermissionsSeeder extends Seeder
                 'description' => 'Consultation des courriers qui lui sont confiés.',
                 'permissions' => [Permission::READ],
             ],
+            Role::CHEF_DEPARTEMENT => [
+                'name' => 'Chef de Département',
+                'description' => 'Supervision des courriers et des services au niveau du département.',
+                'permissions' => [
+                    Permission::READ,
+                    Permission::UPDATE,
+                    Permission::EXPORT,
+                ],
+            ],
             Role::READ_ONLY => [
                 'name' => 'Utilisateur en lecture seule',
                 'description' => 'Consultation uniquement, aucune modification.',
