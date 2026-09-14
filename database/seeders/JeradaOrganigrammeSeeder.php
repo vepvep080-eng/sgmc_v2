@@ -39,7 +39,7 @@ class JeradaOrganigrammeSeeder extends Seeder
         Service::updateOrCreate(
             ['code' => 'ADM-FIN'],
             [
-                'name' => 'مصلحة المالية والصفقات',
+                'name' => 'مصلحة المالية المحلية والصفقات',
                 'department_id' => $deptAdminFin->id,
                 'is_active' => true,
                 'manager_id' => null,
@@ -49,17 +49,7 @@ class JeradaOrganigrammeSeeder extends Seeder
         Service::updateOrCreate(
             ['code' => 'RH-BU-ENV'],
             [
-                'name' => 'مصلحة الموارد البشرية والشؤون الاقتصادية وشرطة البيئة',
-                'department_id' => $deptAdminFin->id,
-                'is_active' => true,
-                'manager_id' => null,
-            ]
-        );
-
-        Service::updateOrCreate(
-            ['code' => 'SALUBRITE'],
-            [
-                'name' => 'مصلحة حفظ الصحة والمحافظة على الأماكن والآثار والتراث الجماعي',
+                'name' => 'مصلحة الموارد البشرية والشؤون الاقتصادية والشرطة الادارية',
                 'department_id' => $deptAdminFin->id,
                 'is_active' => true,
                 'manager_id' => null,
@@ -71,7 +61,7 @@ class JeradaOrganigrammeSeeder extends Seeder
         Service::updateOrCreate(
             ['code' => 'URB-TECH'],
             [
-                'name' => 'مصلحة التعمير والبرامج الكبرى وتدبير الممتلكات',
+                'name' => 'مصلحة التعمير، وشؤون البيئة وتدبير المجال',
                 'department_id' => $deptTechPlan->id,
                 'is_active' => true,
                 'manager_id' => null,
@@ -81,7 +71,7 @@ class JeradaOrganigrammeSeeder extends Seeder
         Service::updateOrCreate(
             ['code' => 'EQT-TP'],
             [
-                'name' => 'مصلحة التجهيزات التقنية والأشغال العمومية',
+                'name' => 'مصلحة الشؤون التقنية والأشغال والصيانة',
                 'department_id' => $deptTechPlan->id,
                 'is_active' => true,
                 'manager_id' => null,
@@ -91,8 +81,19 @@ class JeradaOrganigrammeSeeder extends Seeder
         Service::updateOrCreate(
             ['code' => 'PT-MOYENNES'],
             [
-                'name' => 'مصلحة الممتلكات والشؤون الاجتماعية والثقافية والرياضية',
+                'name' => 'مصلحة الممتلكات والشؤون الاجتماعية والثقافية والرياضية والصحية',
                 'department_id' => $deptTechPlan->id,
+                'is_active' => true,
+                'manager_id' => null,
+            ]
+        );
+
+        // ── Service de l'état civil / affaires juridiques et du conseil ──
+        Service::updateOrCreate(
+            ['code' => 'EC-LEG'],
+            [
+                'name' => 'مصلحة الحالة المدنية والمصادقة على الوثائق والشؤون القانونية وشؤون المجلس',
+                'department_id' => $deptAdminFin->id,
                 'is_active' => true,
                 'manager_id' => null,
             ]

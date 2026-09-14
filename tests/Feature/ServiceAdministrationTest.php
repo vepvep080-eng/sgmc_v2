@@ -51,7 +51,7 @@ class ServiceAdministrationTest extends TestCase
 
     private function userWithRole(string $slug): User
     {
-        $role = Role::create(['name' => $slug, 'slug' => $slug]);
+        $role = Role::firstOrCreate(['slug' => $slug], ['name' => $slug]);
 
         return User::factory()->create(['role_id' => $role->id]);
     }

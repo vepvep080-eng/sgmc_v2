@@ -25,6 +25,7 @@ class Routing extends Model
         'service_source_id',
         'service_destination_id',
         'section_destination_id',
+        'department_id',
         'recipient_user_id',
         'routed_by',
         'statut',
@@ -57,6 +58,16 @@ class Routing extends Model
         return $this->belongsTo(Service::class, 'service_destination_id');
     }
     public function sectionDestination(): BelongsTo { return $this->belongsTo(Section::class, 'section_destination_id'); }
+
+    /**
+     * Département destinataire (Étape 1 BO/Admin -> Chefs de Département).
+     * Renseigné seul quand service_destination_id est NULL
+     * (en attente de sous-routage par le chef de département).
+     */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
+    }
 
     public function routedBy(): BelongsTo
     {

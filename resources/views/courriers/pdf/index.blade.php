@@ -60,9 +60,9 @@
             @forelse ($courriers as $courrier)
                 <tr>
                     <td>{{ $courrier->numero }}</td>
-                    <td>{{ $courrier->objet }}</td>
-                    <td>{{ $courrier->expediteur }}</td>
-                    <td>{{ $courrier->service?->name ?? '—' }}</td>
+                    <td>{{ $arabic->shape($courrier->objet) }}</td>
+                    <td>{{ $arabic->shape($courrier->expediteur) }}</td>
+                    <td>{{ $arabic->shape($courrier->service?->name ?? '—') }}</td>
                     <td>{{ $courrier->date_reception?->locale(app()->getLocale())->translatedFormat('d/m/Y') ?? '—' }}</td>
                     <td>{{ $courrier->priorityLabel() }}</td>
                     <td>{{ $courrier->statusLabel() }}</td>

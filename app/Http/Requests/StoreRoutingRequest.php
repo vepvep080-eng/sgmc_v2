@@ -2,7 +2,12 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Department;
+use App\Models\Role;
 use App\Models\Routing;
+use App\Models\Section;
+use App\Models\Service;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRoutingRequest extends FormRequest
@@ -15,7 +20,15 @@ class StoreRoutingRequest extends FormRequest
     public function rules(): array
     {
         return [
+            // Étape 1 (Admin/BO) : choix MULTIPLE de départements.
+            'department_ids' => ['nullable', 'array', 'min:1'],
+            'department_ids.*' => ['integer', 'exists:departments,id'],
+            // Compat : ancien champ singulier du Blade legacy.
             'department_id' => ['nullable', 'exists:departments,id'],
+            // Étape 2 (Chef département) : choix MULTIPLE de services.
+            'service_destination_ids' => ['nullable', 'array', 'min:1'],
+            'service_destination_ids.*' => ['integer', 'exists:services,id'],
+            // Compat : ancien champ singulier.
             'service_destination_id' => ['nullable', 'exists:services,id'],
             'section_destination_id' => ['nullable', 'exists:sections,id'],
             'recipient_user_id' => ['nullable', 'exists:users,id'],
@@ -23,60 +36,112 @@ class StoreRoutingRequest extends FormRequest
         ];
     }
 
+    /** IDs départements normalisés (multiple OU ancien singulier). @return array<int> */
+    public function departmentIds(): array
+    {
+        $ids = $this->input('department_ids');
+
+        if ($ids === null && $this->filled('department_id')) {
+            $ids = [$this->integer('department_id')];
+        }
+
+        return array_values(array_unique(array_map('intval', (array) ($ids ?? []))));
+    }
+
+    /** IDs services normalisés (multiple OU ancien singulier). @return array<int> */
+    public function serviceDestinationIds(): array
+    {
+        $ids = $this->input('service_destination_ids');
+
+        if ($ids === null && $this->filled('service_destination_id')) {
+            $ids = [$this->integer('service_destination_id')];
+        }
+
+        return array_values(array_unique(array_map('intval', (array) ($ids ?? []))));
+    }
+
     public function after(): array
     {
         return [function ($validator): void {
-            $departmentId = $this->integer('department_id');
-            $serviceId = $this->integer('service_destination_id');
-            $courrier = $this->route('courrier');
             $user = $this->user();
+            $departmentIds = $this->departmentIds();
+            $serviceIds = $this->serviceDestinationIds();
 
-            // Cas CHEF_DEPARTEMENT : département seulement (sans service_destination_id encore)
-            if ($user?->hasRole(\App\Models\Role::CHEF_DEPARTEMENT)) {
-                if ($departmentId && !$serviceId) {
-                    // Création en attente de sous-routage : seulement department_id, pas de service encore
+            // Étape 1 : Admin / BO -> N départements (AUCUN service direct).
+            if ($user?->hasRole(Role::ADMIN, Role::BUREAU_ORDRE)) {
+                if ($serviceIds !== []) {
+                    $validator->errors()->add('service_destination_ids', 'BO-ADMIN-SERVICE-DIRECT');
+                }
+
+                if ($departmentIds === []) {
+                    $validator->errors()->add('department_ids', 'BO-ADMIN-DEPT-REQUIRED');
                     return;
                 }
-            }
 
-            // Validation existante pour CHEF_SERVICE
-            if ($user?->hasRole(\App\Models\Role::CHEF_SERVICE) && $courrier?->service_id !== null && $serviceId !== null) {
-                if ($courrier?->service_id !== $user->service_id || $serviceId !== $user->service_id) {
-                    $validator->errors()->add('service_destination_id', __('app.validation.routing_scope_denied'));
+                $valid = Department::active()->whereIn('id', $departmentIds)->pluck('id')->all();
+
+                if (count($valid) !== count($departmentIds)) {
+                    $validator->errors()->add('department_ids', 'BO-ADMIN-DEPT-INVALID');
                 }
-            }
 
-            // Validation existante pour CHEF_SECTION
-            if ($user?->hasRole(\App\Models\Role::CHEF_SECTION) && $courrier?->section_id !== null && $this->integer('section_destination_id') !== null) {
-                if ($courrier?->section_id !== $user->section_id || $this->integer('section_destination_id') !== $user->section_id) {
-                    $validator->errors()->add('section_destination_id', __('app.validation.routing_scope_denied'));
+                if ($this->filled('recipient_user_id')) {
+                    $validator->errors()->add('recipient_user_id', 'BO-ADMIN-NO-RECIPIENT');
                 }
+
+                return;
             }
 
-            // Mismatch department/service when both are filled
-            if ($departmentId && $serviceId && ! \App\Models\Service::whereKey($serviceId)->where('department_id', $departmentId)->exists()) {
-                $validator->errors()->add('service_destination_id', __('app.validation.service_department_mismatch'));
+            // Étape 2 : Chef département -> N services de SON département.
+            if ($user?->hasRole(Role::CHEF_DEPARTEMENT)) {
+                $managed = Department::query()->where('manager_id', $user->id)->first();
+
+                if ($managed === null) {
+                    $validator->errors()->add('service_destination_ids', 'CHEF-DEPT-NO-MANAGED');
+                    return;
+                }
+
+                if ($departmentIds !== []) {
+                    $validator->errors()->add('department_ids', 'CHEF-DEPT-NO-OTHER-DEPT');
+                    return;
+                }
+
+                if ($serviceIds === []) {
+                    $validator->errors()->add('service_destination_ids', 'CHEF-DEPT-SERVICE-REQUIRED');
+                    return;
+                }
+
+                $allowed = Service::whereIn('id', $serviceIds)
+                    ->where('department_id', $managed->id)
+                    ->where('is_active', true)
+                    ->pluck('id')->all();
+
+                if (count($allowed) !== count($serviceIds)) {
+                    $validator->errors()->add('service_destination_ids', 'CHEF-DEPT-SERVICE-SCOPE');
+                }
+
+                if ($this->filled('recipient_user_id')) {
+                    $ok = User::whereKey($this->integer('recipient_user_id'))
+                        ->whereIn('service_id', $allowed ?: [-1])
+                        ->exists();
+
+                    if (! $ok) {
+                        $validator->errors()->add('recipient_user_id', 'CHEF-DEPT-RECIPIENT-SCOPE');
+                    }
+                }
+
+                return;
             }
 
-            // Recipient service validation
-            if ($this->filled('recipient_user_id') && $serviceId !== null && ! \App\Models\User::whereKey($this->integer('recipient_user_id'))->where('service_id', $serviceId)->exists()) {
-                $validator->errors()->add('recipient_user_id', __('app.validation.recipient_service_mismatch'));
-            }
-
-            // Section validation
-            if ($this->filled('section_destination_id') && $serviceId !== null && ! \App\Models\Section::whereKey($this->integer('section_destination_id'))->where('service_id', $serviceId)->exists()) {
-                $validator->errors()->add('section_destination_id', __('app.validation.section_service_mismatch'));
-            }
-
-            if ($this->filled('recipient_user_id') && $this->filled('section_destination_id') && $serviceId !== null && ! \App\Models\User::whereKey($this->integer('recipient_user_id'))->where('section_id', $this->integer('section_destination_id'))->exists()) {
-                $validator->errors()->add('recipient_user_id', __('app.validation.recipient_section_mismatch'));
-            }
+            // Étape 3 : Chef de service -> traitement, aucun renvoi.
+            $validator->errors()->add('service_destination_ids', 'CHEF-SERVICE-NO-REDIRECT');
         }];
     }
 
     public function attributes(): array
     {
         return [
+            'department_ids' => 'départements destinataires',
+            'service_destination_ids' => 'services destinataires',
             'service_destination_id' => 'service destinataire',
             'section_destination_id' => 'section destinataire',
             'commentaire' => 'commentaire',

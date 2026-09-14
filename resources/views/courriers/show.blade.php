@@ -131,22 +131,37 @@
     @include('courriers._routing_timeline', ['courrier' => $courrier])
 
     @can('update', $courrier)
-        <section class="mt-6 rounded-[24px] border border-white/70 bg-white/55 p-6 dark:border-white/10 dark:bg-white/[0.05]" data-scan-panel data-courrier-id="{{ $courrier->id }}">
-            <h2 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">{{ __('app.scan_documents') }}</h2>
-            <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/60" data-scanner-status>{{ __('app.scanner_unavailable') }}</p>
-            <button type="button" data-start-scan class="mt-4 rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white">{{ __('app.start_scan') }}</button>
+        <section class="relative mt-6 rounded-[24px] border border-white/70 bg-white/55 dark:border-white/10 dark:bg-white/[0.05] backdrop-blur-2xl shadow-glass-lg dark:shadow-glass-lg-dark p-6" data-scan-panel data-courrier-id="{{ $courrier->id }}">
+            <div class="absolute top-0 left-8 w-16 h-[2px] rounded-full bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
 
-            <div class="mt-6 border-t pt-5 dark:border-white/10" data-qr-panel>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-primary-100/80 dark:bg-primary-500/15 border border-primary-500/15 dark:border-white/10 flex items-center justify-center shrink-0">
+                        <x-icon name="archive" class="w-5 h-5 text-primary-700 dark:text-primary-100" />
+                    </div>
+                    <h2 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">{{ __('app.scan_documents') }}</h2>
+                </div>
+                {{-- La pill est stylée via [data-scanner-status] dans app.css :
+                     scanner.js remplace className (status-*) à chaque mise à jour. --}}
+                <p data-scanner-status>{{ __('app.scanner_unavailable') }}</p>
+            </div>
+
+            <button type="button" data-start-scan class="mt-5 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:bg-primary-600 hover:scale-[1.02] active:scale-[0.99]">
+                <x-icon name="refresh" class="w-4 h-4" />
+                {{ __('app.start_scan') }}
+            </button>
+
+            <div class="mt-6 border-t border-primary-500/10 dark:border-white/10 pt-5" data-qr-panel>
                 <h3 class="font-semibold text-primary-800 dark:text-primary-50">{{ __('app.read_qr') }}</h3>
                 <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/60">{{ __('app.qr_value') }}</p>
                 <input
                     data-qr-payload
                     type="text"
-                    class="mt-3 w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50 placeholder:text-primary-700/40 dark:placeholder:text-primary-100/30"
+                    class="mt-3 w-full rounded-xl bg-primary-100/50 dark:bg-white/[0.06] border border-primary-500/10 dark:border-white/10 px-4 py-2.5 text-sm text-primary-900 dark:text-primary-50 placeholder:text-primary-500/40 dark:placeholder:text-primary-100/30 outline-none transition-all duration-300 ease-fluent focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
                     maxlength="2048"
                 />
-                <button data-qr-submit type="button" class="mt-2 rounded-xl border border-primary-500/15 dark:border-white/10 px-4 py-2 text-sm text-primary-700 dark:text-primary-100">{{ __('app.read_qr') }}</button>
-                <pre data-qr-result class="mt-3 hidden whitespace-pre-wrap rounded-lg bg-slate-50 dark:bg-white/5 p-3 text-sm text-primary-800 dark:text-primary-50"></pre>
+                <button data-qr-submit type="button" class="mt-2.5 inline-flex items-center gap-2 rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/60 dark:bg-white/[0.06] px-4 py-2 text-sm font-semibold text-primary-700 dark:text-primary-100 shadow-glass hover:bg-white/80 dark:hover:bg-white/[0.1] transition-all duration-200 ease-fluent">{{ __('app.read_qr') }}</button>
+                <pre data-qr-result class="mt-3 hidden whitespace-pre-wrap rounded-xl border border-primary-500/10 bg-primary-100/60 dark:bg-white/5 p-3.5 text-sm text-primary-900 dark:text-primary-50"></pre>
             </div>
         </section>
         @push('scripts')
@@ -176,69 +191,58 @@
                 </div>
             @endif
             
-            <form method="POST" action="{{ route('courriers.routings.store', $courrier) }}" class="mt-5 grid gap-4 sm:grid-cols-3">
+            <form method="POST" action="{{ route('courriers.routings.store', $courrier) }}" class="mt-5 grid gap-4">
                 @csrf
-                
-                <!-- Département -->
+                @php
+                    $me = auth()->user();
+                    $isBoAdmin = $me && $me->hasRole(\App\Models\Role::ADMIN, \App\Models\Role::BUREAU_ORDRE);
+                @endphp
+
+                @if ($isBoAdmin)
                 <div>
-                    <label for="department_id" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.department') }}</label>
-                    <select id="department_id" name="department_id" class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50">
-                        <option value="">{{ __('app.no_department') }}</option>
-                        @foreach($departments as $department)
-                            <option value="{{ $department->id }}" {{ $courrier->currentRouting && $courrier->currentRouting->department_id == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
-                        @endforeach
-                    </select>
+                    <span class="mb-1 block text-sm font-medium">Envoyer à (départements — choix multiple)</span>
+                    <div class="grid gap-2 sm:grid-cols-2">
+                        @forelse($routableDepartments ?? [] as $department)
+                            <label class="flex items-start gap-2 rounded-xl border px-3 py-2 text-sm">
+                                <input type="checkbox" name="department_ids[]" value="{{ $department->id }}" class="mt-1"
+                                    @checked(in_array($department->id, old('department_ids', $pendingDepartmentIds ?? []))) />
+                                <span>{{ $department->name }}</span>
+                            </label>
+                        @empty
+                            <p class="text-sm opacity-60">Aucun département actif.</p>
+                        @endforelse
+                    </div>
+                    @error('department_ids')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
                 </div>
-                
-                <!-- Service destination -->
+                @else
                 <div>
-                    <label for="service_destination_id" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.service') }}</label>
-                    <select id="service_destination_id" name="service_destination_id" required class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50">
-                        @foreach($departments as $department)
-                            <optgroup label="{{ $department->name }}">
-                                @foreach($department->services as $service)
-                                    @if ($courrier->currentRouting && is_null($courrier->currentRouting->service_destination_id))
-                                        <!-- Mode attente : service grisé si déjà rattaché à ce département -->
-                                        @if ($courrier->currentRouting->department_id == $department->id)
-                                            <option value="{{ $service->id }}" data-department="{{ $department->id }}" disabled>{{ $service->name }}</option>
-                                        @else
-                                            <option value="{{ $service->id }}" data-department="{{ $department->id }}">{{ $service->name }}</option>
-                                        @endif
-                                    @else
-                                        <option value="{{ $service->id }}" data-department="{{ $department->id }}">{{ $service->name }}</option>
-                                    @endif
-                                @endforeach
-                            </optgroup>
-                        @endforeach
-                    </select>
-                    @error('service_destination_id')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
+                    <span class="mb-1 block text-sm font-medium">Dispatcher vers (services de {{ $managedDepartment?->name ?? 'votre département' }} — choix multiple)</span>
+                    <div class="grid gap-2 sm:grid-cols-2">
+                        @forelse($dispatchableServices ?? [] as $service)
+                            <label class="flex items-start gap-2 rounded-xl border px-3 py-2 text-sm">
+                                <input type="checkbox" name="service_destination_ids[]" value="{{ $service->id }}" class="mt-1"
+                                    @checked(in_array($service->id, old('service_destination_ids', [])))
+                                    @disabled(in_array($service->id, $dispatchedServiceIds ?? [])) />
+                                <span>{{ $service->name }}</span>
+                            </label>
+                        @empty
+                            <p class="text-sm opacity-60">Aucun service dans votre département.</p>
+                        @endforelse
+                    </div>
+                    @error('service_destination_ids')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
                 </div>
-                
+                @endif
                 <div>
-                    <label for="recipient_user_id" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.manager') }}</label>
-                    <select id="recipient_user_id" name="recipient_user_id" class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50">
-                        <option value="">{{ __('app.no_manager') }}</option>
-                        @foreach($recipients as $recipient)
-                            <option value="{{ $recipient->id }}" data-service="{{ $recipient->service_id }}">{{ $recipient->name }}{{ $recipient->service ? ' — '.$recipient->service->name : '' }}</option>
-                        @endforeach
-                    </select>
-                    @error('recipient_user_id')<p class="text-xs text-red-600">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label for="commentaire" class="mb-1 block text-sm text-primary-700/70 dark:text-primary-100/60">{{ __('app.description') }}</label>
+                    <label for="commentaire" class="mb-1 block text-sm">Commentaire</label>
                     <textarea
                         id="commentaire"
                         name="commentaire"
-                        class="w-full rounded-xl border border-primary-500/15 dark:border-white/10 bg-white/70 dark:bg-white/[0.04] px-3 py-2 text-primary-800 dark:text-primary-50 placeholder:text-primary-700/40 dark:placeholder:text-primary-100/30"
+                        class="w-full rounded-xl border px-3 py-2"
                     ></textarea>
                 </div>
-                <div class="sm:col-span-3">
+                <div>
                     <button type="submit" class="rounded-xl bg-primary-500 px-4 py-2 text-white">
-                        @if ($courrier->currentRouting && is_null($courrier->currentRouting->service_destination_id))
-                            Terminer le routage
-                        @else
-                            Rouler
-                        @endif
+                        {{ $isBoAdmin ? 'Envoyer aux départements' : 'Dispatcher vers les services' }}
                     </button>
                 </div>
             </form>

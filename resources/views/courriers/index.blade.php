@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title', __('app.incoming') . " — " . __('app.app_name'))
 @section('page-title', __('app.incoming'))
@@ -21,10 +21,20 @@
 @endphp
 
 @section('content')
-    {{-- Header --}}
-    <div class="flex flex-wrap items-center justify-between gap-4 opacity-0 animate-fadeInUp" style="animation-delay: 0.05s;">
+    {{-- Header (maquette: breadcrumb + year badge + export cluster) --}}
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between opacity-0 animate-fadeInUp" style="animation-delay: 0.05s;">
         <div>
-            <h2 class="font-display font-semibold text-2xl text-primary-800 dark:text-primary-50">{{ __('app.incoming') }}</h2>
+            <nav class="flex items-center gap-1.5 text-[11px] font-medium text-primary-700/55 dark:text-primary-100/45" aria-label="Breadcrumb">
+                <span>{{ __('app.dashboard') }}</span>
+                <x-icon name="chevron-left" class="w-3 h-3 rtl-flip" />
+                <span>{{ __('app.mail') }}</span>
+                <x-icon name="chevron-left" class="w-3 h-3 rtl-flip" />
+                <span class="font-semibold text-primary-700 dark:text-primary-100">{{ __('app.incoming') }}</span>
+            </nav>
+            <div class="mt-1.5 flex flex-wrap items-center gap-2.5">
+                <h2 class="font-display font-semibold text-2xl text-primary-800 dark:text-primary-50">{{ __('app.incoming') }}</h2>
+                <span class="tabular-nums rounded-full bg-primary-100/70 dark:bg-white/10 px-2.5 py-0.5 text-[11px] font-bold text-primary-700 dark:text-primary-100">{{ now()->format('Y') }}</span>
+            </div>
             <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/50">
                 {{ $courriers->total() }} {{ __('app.mail') }} {{ __('app.registered') }}
             </p>
@@ -58,7 +68,7 @@
 
             <a
                 href="{{ route('courriers.create') }}"
-                class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 via-primary-500 to-secondary-500 shadow-[0_10px_28px_-8px_rgba(11,61,145,0.5)] transition-all duration-300 ease-fluent hover:shadow-gold-glow hover:scale-[1.02] active:scale-[0.99]"
+                class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white bg-primary shadow-md transition-all hover:bg-primary-600 hover:scale-[1.02] active:scale-[0.99]"
             >
                 <x-icon name="plus-simple" class="w-4 h-4" />
                 {{ __('app.add_mail') }}
@@ -162,7 +172,7 @@
             <div class="flex items-center gap-2 shrink-0">
                 <button
                     type="submit"
-                    class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-primary-500 to-secondary-500 shadow-[0_8px_20px_-8px_rgba(11,61,145,0.5)] transition-all duration-300 ease-fluent hover:scale-[1.02] active:scale-[0.99]"
+                    class="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white bg-primary shadow-md transition-all hover:bg-primary-600 hover:scale-[1.02] active:scale-[0.99]"
                 >
                     <x-icon name="filter" class="w-4 h-4" />
                     {{ __('app.filter') }}
@@ -217,7 +227,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-sm">
                     <thead class="sticky top-0 z-[5] bg-primary-100/45 dark:bg-midnight-900/60 backdrop-blur-xl">
-                        <tr class="border-b border-white/50 dark:border-white/10 text-left">
+                        <tr class="border-b-2 border-outline-strong/40 dark:border-white/10 text-left">
                             <th class="px-6 sm:px-8 py-3.5">
                                 <a href="{{ $sortUrl('numero') }}" class="inline-flex items-center gap-1 text-[11px] font-semibold tracking-wide uppercase text-primary-800/85 dark:text-primary-100/80 hover:text-primary-700 dark:hover:text-primary-100 transition-colors duration-200">
                                     {{ __('app.mail_number') }}

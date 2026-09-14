@@ -87,10 +87,10 @@ class CourrierDocumentPdfExportTest extends TestCase
 
     private function userWithRole(string $slug, ?Service $service = null): User
     {
-        $role = Role::create([
-            'name' => str($slug)->replace('_', ' ')->title(),
-            'slug' => $slug,
-        ]);
+        $role = Role::firstOrCreate(
+            ['slug' => $slug],
+            ['name' => str($slug)->replace('_', ' ')->title()],
+        );
 
         return User::factory()->create([
             'role_id' => $role->id,

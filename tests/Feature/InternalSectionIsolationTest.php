@@ -30,7 +30,7 @@ class InternalSectionIsolationTest extends TestCase
 
     private function user(string $roleSlug, Service $service, ?Section $section = null): User
     {
-        $role = Role::create(['name' => $roleSlug, 'slug' => $roleSlug]);
+        $role = Role::firstOrCreate(['slug' => $roleSlug], ['name' => $roleSlug]);
 
         return User::factory()->create(['role_id' => $role->id, 'service_id' => $service->id, 'section_id' => $section?->id]);
     }

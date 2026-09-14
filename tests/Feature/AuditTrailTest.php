@@ -19,15 +19,15 @@ class AuditTrailTest extends TestCase
     public function test_creating_a_courrier_records_the_authenticated_actor(): void
     {
         $admin = $this->userWithRole(Role::ADMIN);
-        $service = $this->service('URB', 'Urbanisme');
 
-        $this->actingAs($admin)->post(route('courriers.store'), $this->courrierData($service));
+        $this->actingAs($admin)->post(route('courriers.store'), $this->courrierData(null));
 
         $auditLog = AuditLog::where('action', 'created')->firstOrFail();
 
         $this->assertSame($admin->id, $auditLog->user_id);
         $this->assertSame(Courrier::class, $auditLog->auditable_type);
-        $this->assertSame($service->id, $auditLog->service_id);
+        // Hiérarchie : l'enregistrement initial ne cible aucun service.
+        $this->assertNull($auditLog->service_id);
     }
 
     public function test_updating_a_courrier_records_old_and_new_values(): void
@@ -68,13 +68,25 @@ class AuditTrailTest extends TestCase
     public function test_routing_and_receiving_a_courrier_record_audit_logs(): void
     {
         $admin = $this->userWithRole(Role::ADMIN);
+        $dept = \App\Models\Department::create(['name' => 'Dept', 'code' => 'DPT']);
         $urbanisme = $this->service('URB', 'Urbanisme');
         $finance = $this->service('FIN', 'Finances');
+        $urbanisme->update(['department_id' => $dept->id]);
+        $finance->update(['department_id' => $dept->id]);
+        $dept->update(['manager_id' => $this->userWithRole(Role::CHEF_DEPARTEMENT)->id]);
         $chef = $this->userWithRole(Role::CHEF_SERVICE, $finance);
         $courrier = $this->courrier($urbanisme);
 
+        // Étape 1 (hiérarchique) : Admin -> département.
         $this->actingAs($admin)->post(route('courriers.routings.store', $courrier), [
-            'service_destination_id' => $finance->id,
+            'department_ids' => [$dept->id],
+            'commentaire' => 'Envoi au département.',
+        ])->assertRedirect(route('courriers.show', $courrier));
+
+        // Étape 2 : le chef du département dispatche vers son service.
+        $chefDept = $dept->fresh()->manager;
+        $this->actingAs($chefDept)->post(route('courriers.routings.store', $courrier), [
+            'service_destination_ids' => [$finance->id],
             'commentaire' => 'Transmission au service compétent.',
         ])->assertRedirect(route('courriers.show', $courrier));
 
@@ -258,10 +270,10 @@ class AuditTrailTest extends TestCase
 
     private function userWithRole(string $slug, ?Service $service = null): User
     {
-        $role = Role::create([
-            'name' => str($slug)->replace('_', ' ')->title(),
-            'slug' => $slug,
-        ]);
+        $role = Role::firstOrCreate(
+            ['slug' => $slug],
+            ['name' => str($slug)->replace('_', ' ')->title()],
+        );
 
         return User::factory()->create([
             'role_id' => $role->id,
@@ -281,7 +293,7 @@ class AuditTrailTest extends TestCase
         ], $attributes));
     }
 
-    private function courrierData(Service $service, array $attributes = []): array
+    private function courrierData(?Service $service, array $attributes = []): array
     {
         return array_merge([
             'objet' => 'Objet du courrier',
@@ -290,7 +302,7 @@ class AuditTrailTest extends TestCase
             'reference' => 'REF-001',
             'priorite' => 'normale',
             'type' => 'Administratif',
-            'service_id' => $service->id,
+            'service_id' => $service?->id,
             'description' => 'Description administrative.',
         ], $attributes);
     }

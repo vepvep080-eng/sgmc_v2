@@ -22,7 +22,7 @@ class UpdateCourrierRequest extends FormRequest
             'reference' => ['nullable', 'string', 'max:100'],
             'priorite' => ['required', Rule::in(array_keys(Courrier::PRIORITES))],
             'type' => ['required', 'string', 'max:100'],
-            'service_id' => ['required', 'exists:services,id'],
+            'service_id' => ['nullable', 'exists:services,id'],
             'description' => ['nullable', 'string', 'max:5000'],
             'piece_jointe' => ['nullable', 'file', 'mimes:pdf,doc,docx,jpg,jpeg,png', 'max:10240'],
             'remove_piece_jointe' => ['nullable', 'boolean'],

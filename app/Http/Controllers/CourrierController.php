@@ -69,20 +69,13 @@ class CourrierController extends Controller
             try {
                 $courrier = DB::transaction(function () use ($data, $request) {
                     $data['numero'] = Courrier::generateNumero();
-                    $courrier = Courrier::create($data);
+                    // Enregistrement initial : AUCUN routage auto. L'admin/BO
+                    // envoie ensuite vers 1..N départements depuis la fiche
+                    // (Étape 1 hiérarchique). service_id reste NULL jus'au dispatch.
+                    $data['service_id'] = null;
+                    $data['department_id'] = null;
 
-                    // First move: straight from the Bureau d'Ordre (no source
-                    // service) to whichever service was chosen on the form.
-                    Routing::create([
-                        'courrier_id' => $courrier->id,
-                        'service_source_id' => null,
-                        'service_destination_id' => $courrier->service_id,
-                        'routed_by' => $request->user()->id,
-                        'statut' => Routing::STATUT_EN_ATTENTE,
-                        'sent_at' => now(),
-                    ]);
-
-                    return $courrier;
+                    return Courrier::create($data);
                 });
 
                 break;
@@ -100,21 +93,59 @@ class CourrierController extends Controller
 
     public function show(Courrier $courrier): View
     {
+        $user = request()->user();
+
+        $courrier->load([
+            'service',
+            'department',
+            'creator',
+            'treatedBy',
+            'archivedBy',
+            'currentRouting.serviceDestination',
+            'currentRouting.department',
+            'routings.serviceSource',
+            'routings.serviceDestination',
+            'routings.department',
+            'routings.routedBy',
+            'routings.recipient',
+            'auditLogs.user',
+            'auditLogs.service',
+        ]);
+
+        // Options "Envoyer à" limitées par rôle (le serveur re-vérifie tout) :
+        // - Admin/BO : TOUS les départements (choix multiple).
+        // - Chef département : services de SON département (choix multiple).
+        $hierarchy = app(\App\Services\HierarchicalRoutingService::class);
+
+        $managedDepartment = $user->hasRole(\App\Models\Role::CHEF_DEPARTEMENT)
+            ? $hierarchy->managedDepartment($user)
+            : null;
+
+        $dispatchedServiceIds = $courrier->routings()
+            ->whereNotNull('service_destination_id')
+            ->pluck('service_destination_id')->all();
+
+        $sentDepartmentIds = $courrier->routings()
+            ->whereNotNull('department_id')
+            ->pluck('department_id')->all();
+
+        $pendingDepartmentIds = $courrier->routings()
+            ->whereNotNull('department_id')
+            ->whereNull('service_destination_id')
+            ->where('statut', \App\Models\Routing::STATUT_EN_ATTENTE)
+            ->pluck('department_id')->all();
+
         return view('courriers.show', [
-            'courrier' => $courrier->load([
-                'service',
-                'creator',
-                'treatedBy',
-                'archivedBy',
-                'currentRouting.serviceDestination',
-                'routings.serviceSource',
-                'routings.serviceDestination',
-                'routings.routedBy',
-                'auditLogs.user',
-                'auditLogs.service',
-            ]),
+            'courrier' => $courrier,
             'departments' => Department::active()->with(['services' => fn ($query) => $query->where('is_active', true)->orderBy('name')])->orderBy('name')->get(),
             'recipients' => User::where('is_active', true)->with('service')->orderBy('name')->get(),
+            'routableDepartments' => $hierarchy->targetableDepartments($user),
+            'dispatchableServices' => $hierarchy->targetableServices($user),
+            'dispatchableChiefs' => $hierarchy->targetableServiceChiefs($user),
+            'managedDepartment' => $managedDepartment,
+            'dispatchedServiceIds' => $dispatchedServiceIds,
+            'sentDepartmentIds' => $sentDepartmentIds,
+            'pendingDepartmentIds' => $pendingDepartmentIds,
         ]);
     }
 

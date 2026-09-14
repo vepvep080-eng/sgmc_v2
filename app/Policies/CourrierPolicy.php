@@ -21,9 +21,23 @@ class CourrierPolicy
             return true;
         }
 
+        if ($user->hasRole(Role::CHEF_DEPARTEMENT)) {
+            $department = \App\Models\Department::where('manager_id', $user->id)->first();
+
+            if ($department === null) {
+                return false;
+            }
+
+            // Visible si routé vers SON département OU rattaché à un de ses services.
+            return $courrier->routings()->where('department_id', $department->id)->exists()
+                || ($courrier->service_id !== null
+                    && $department->services()->whereKey($courrier->service_id)->exists());
+        }
+
         return ($user->hasRole(Role::CHEF_SERVICE)
             && $user->service_id !== null
-            && $user->service_id === $courrier->service_id)
+            && ($user->service_id === $courrier->service_id
+                || $courrier->routings()->where('service_destination_id', $user->service_id)->exists()))
             || ($user->hasRole(Role::CHEF_SECTION) && $user->section_id !== null && $user->section_id === $courrier->section_id)
             || ($user->hasRole(Role::EMPLOYEE) && $user->id === $courrier->assigned_user_id);
     }

@@ -64,7 +64,7 @@ class OutgoingCourrierWorkflowTest extends TestCase
 
     private function userWithRole(string $slug, ?Service $service = null): User
     {
-        $role = Role::create(['name' => $slug, 'slug' => $slug]);
+        $role = Role::firstOrCreate(['slug' => $slug], ['name' => $slug]);
 
         return User::factory()->create(['role_id' => $role->id, 'service_id' => $service?->id]);
     }

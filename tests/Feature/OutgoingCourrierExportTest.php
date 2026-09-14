@@ -16,7 +16,7 @@ class OutgoingCourrierExportTest extends TestCase
     public function test_exports_print_and_report_respect_service_visibility(): void
     {
         $urbanisme = Service::create(['name' => 'Urbanisme', 'code' => 'URB']); $finance = Service::create(['name' => 'Finance', 'code' => 'FIN']);
-        $role = Role::create(['name' => 'Chef', 'slug' => Role::CHEF_SERVICE]); $chef = User::factory()->create(['role_id' => $role->id, 'service_id' => $urbanisme->id]);
+        $role = Role::firstOrCreate(['slug' => Role::CHEF_SERVICE], ['name' => 'Chef']); $chef = User::factory()->create(['role_id' => $role->id, 'service_id' => $urbanisme->id]);
         $creator = User::factory()->create();
         $visible = OutgoingCourrier::create(['objet'=>'Visible','destinataire'=>'A','organisme_destinataire'=>'Org','date_envoi'=>'2026-08-12','mode_envoi'=>'Ordinaire','priorite'=>'normale','service_id'=>$urbanisme->id,'created_by'=>$creator->id]);
         $hidden = OutgoingCourrier::create(['objet'=>'Hidden','destinataire'=>'B','organisme_destinataire'=>'Org','date_envoi'=>'2026-08-12','mode_envoi'=>'Ordinaire','priorite'=>'normale','service_id'=>$finance->id,'created_by'=>$creator->id]);

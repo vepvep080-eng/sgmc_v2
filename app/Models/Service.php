@@ -42,6 +42,33 @@ class Service extends Model
         return $this->belongsTo(User::class, 'manager_id');
     }
 
+    /**
+     * Chef(s) de ce service : users rattachés (service_id) avec le rôle chef_service.
+     * Sert le "Envoyer à" du chef de département (filtré par département).
+     */
+    public function chefs(): HasMany
+    {
+        $chefServiceRoleId = Role::query()->where('slug', Role::CHEF_SERVICE)->value('id');
+
+        return $this->hasMany(User::class)->when(
+            $chefServiceRoleId,
+            fn (Builder $q, $roleId) => $q->where('role_id', $roleId)
+        );
+    }
+
+    /**
+     * Le chef du service (convention : premier chef_service rattaché,
+     * sinon le manager désigné via manager_id).
+     */
+    public function chef(): ?User
+    {
+        if ($this->relationLoaded('chefs') && $this->getRelation('chefs')->isNotEmpty()) {
+            return $this->getRelation('chefs')->first();
+        }
+
+        return $this->chefs()->first() ?? $this->manager;
+    }
+
     public function courriers(): HasMany
     {
         return $this->hasMany(Courrier::class);

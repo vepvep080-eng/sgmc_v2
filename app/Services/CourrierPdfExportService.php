@@ -8,8 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CourrierPdfExportService
 {
-    public function __construct(private CourrierQueryService $courrierQuery)
-    {
+    public function __construct(
+        private CourrierQueryService $courrierQuery,
+        private ArabicPdfTextService $arabic,
+    ) {
     }
 
     public function download(User $user, array $filters): Response
@@ -21,6 +23,7 @@ class CourrierPdfExportService
             'generatedAt' => $generatedAt,
             'generatedBy' => $user,
             'logo' => $this->logoDataUri(),
+            'arabic' => $this->arabic,
         ])
             ->setPaper('a4', 'landscape')
             ->download('courriers_'.$generatedAt->format('Y_m_d_His').'.pdf');

@@ -314,3 +314,133 @@ input[data-flatpickr] {
   font-family: Inter, "Segoe UI", sans-serif;
   -webkit-locale: "en";
 }
+
+/* ------------------------------------------------------------------
+   Scanner status pill (courriers/show — [data-scanner-status]).
+   scanner.js REPLACES the element className with a `status-*` class on
+   every update, so the pill styling MUST live here (the attribute
+   selector survives className replacement) — not in Tailwind classes.
+   Palette: pending #A26E0B / completed #127A52 / failed #BA2525.
+------------------------------------------------------------------- */
+[data-scanner-status] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  border: 1px solid rgba(13, 74, 54, 0.18);
+  background-color: rgba(223, 250, 237, 0.65);
+  color: #4d655d;
+}
+[data-scanner-status]::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: #707974;
+  flex-shrink: 0;
+}
+[data-scanner-status].status-pending {
+  background-color: rgba(253, 245, 230, 0.9);
+  border-color: rgba(162, 110, 11, 0.25);
+  color: #a26e0b;
+}
+[data-scanner-status].status-pending::before {
+  background-color: #a26e0b;
+}
+[data-scanner-status].status-scanning {
+  background-color: rgba(253, 245, 230, 0.9);
+  border-color: rgba(162, 110, 11, 0.3);
+  color: #a26e0b;
+}
+[data-scanner-status].status-scanning::before {
+  background-color: #a26e0b;
+  animation: sgmc-status-pulse 1.2s ease-in-out infinite;
+}
+[data-scanner-status].status-completed {
+  background-color: rgba(230, 245, 239, 0.95);
+  border-color: rgba(18, 122, 82, 0.3);
+  color: #127a52;
+}
+[data-scanner-status].status-completed::before {
+  background-color: #127a52;
+}
+[data-scanner-status].status-failed {
+  background-color: rgba(253, 240, 240, 0.9);
+  border-color: rgba(186, 37, 37, 0.3);
+  color: #ba2525;
+}
+[data-scanner-status].status-failed::before {
+  background-color: #ba2525;
+}
+[data-scanner-status].status-agent-offline {
+  background-color: rgba(186, 37, 37, 0.08);
+  border-color: rgba(186, 37, 37, 0.35);
+  color: #ba2525;
+}
+[data-scanner-status].status-agent-offline::before {
+  background-color: #ba2525;
+}
+[data-scanner-status].status-expired,
+[data-scanner-status].status-unknown {
+  background-color: rgba(112, 121, 116, 0.1);
+  border-color: rgba(112, 121, 116, 0.25);
+  color: #4d655d;
+}
+[data-scanner-status].status-expired::before,
+[data-scanner-status].status-unknown::before {
+  background-color: #707974;
+}
+
+.dark [data-scanner-status] {
+  background-color: rgba(13, 74, 54, 0.3);
+  border-color: rgba(153, 211, 184, 0.2);
+  color: #99d3b8;
+}
+.dark [data-scanner-status]::before {
+  background-color: #707974;
+}
+.dark [data-scanner-status].status-pending,
+.dark [data-scanner-status].status-scanning {
+  background-color: rgba(244, 190, 91, 0.12);
+  border-color: rgba(244, 190, 91, 0.3);
+  color: #f4be5b;
+}
+.dark [data-scanner-status].status-pending::before,
+.dark [data-scanner-status].status-scanning::before {
+  background-color: #f4be5b;
+}
+.dark [data-scanner-status].status-completed {
+  background-color: rgba(18, 122, 82, 0.2);
+  border-color: rgba(153, 211, 184, 0.3);
+  color: #99d3b8;
+}
+.dark [data-scanner-status].status-completed::before {
+  background-color: #99d3b8;
+}
+.dark [data-scanner-status].status-failed,
+.dark [data-scanner-status].status-agent-offline {
+  background-color: rgba(186, 37, 37, 0.18);
+  border-color: rgba(186, 37, 37, 0.4);
+  color: #ffdad6;
+}
+.dark [data-scanner-status].status-failed::before,
+.dark [data-scanner-status].status-agent-offline::before {
+  background-color: #ffdad6;
+}
+
+@keyframes sgmc-status-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.75);
+  }
+}

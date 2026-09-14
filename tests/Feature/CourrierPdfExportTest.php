@@ -55,12 +55,40 @@ class CourrierPdfExportTest extends TestCase
         $this->assertStringStartsWith('%PDF', $response->getContent());
     }
 
+    public function test_the_list_pdf_export_shapes_arabic_text(): void
+    {
+        $admin = $this->userWithRole(Role::ADMIN);
+        $service = Service::create(['name' => 'مصلحة الشؤون الاجتماعية والثقافية', 'code' => 'SOC']);
+
+        $this->courrier($service, [
+            'objet' => 'طلب رخصة بناء مجمع تجاري يربط بين الحيين',
+            'expediteur' => 'الجماعة الترابية لجرادة - قسم التعمير',
+        ]);
+
+        $services = app(CourrierQueryService::class);
+        $courriers = $services->export($admin, []);
+
+        $html = view('courriers.pdf.index', [
+            'courriers' => $courriers,
+            'generatedAt' => now(),
+            'generatedBy' => $admin,
+            'logo' => null,
+            'arabic' => app(\App\Services\ArabicPdfTextService::class),
+        ])->render();
+
+        // The uppercase Yā + presentation-forms (U+FE8E etc.) prove each
+        // Arabic letter was converted to its joined glyph rather than left
+        // as isolated codepoints.
+        $this->assertStringContainsString('مصلحة', $courriers->first()->service->name);
+        $this->assertMatchesRegularExpression('/[\x{FE70}-\x{FEF4}]/u', $html, 'The PDF template must emit presentation-form codepoints for Arabic text.');
+    }
+
     private function userWithRole(string $slug, ?Service $service = null): User
     {
-        $role = Role::create([
-            'name' => str($slug)->replace('_', ' ')->title(),
-            'slug' => $slug,
-        ]);
+        $role = Role::firstOrCreate(
+            ['slug' => $slug],
+            ['name' => str($slug)->replace('_', ' ')->title()],
+        );
 
         return User::factory()->create([
             'role_id' => $role->id,

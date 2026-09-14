@@ -16,7 +16,7 @@ class QrPayloadTest extends TestCase
     public function test_arbitrary_qr_is_returned_as_safe_text_and_only_a_hash_is_audited(): void
     {
         $service = Service::create(['name' => 'Service', 'code' => 'QR']);
-        $role = Role::create(['name' => Role::ADMIN, 'slug' => Role::ADMIN]);
+        $role = Role::firstOrCreate(['slug' => Role::ADMIN], ['name' => Role::ADMIN]);
         $user = User::factory()->create(['role_id' => $role->id, 'service_id' => $service->id]);
         $courrier = Courrier::create(['objet' => 'Objet', 'expediteur' => 'Expéditeur', 'date_reception' => now()->toDateString(), 'priorite' => 'normale', 'type' => 'Administratif', 'service_id' => $service->id, 'user_id' => $user->id, 'statut' => 'nouveau']);
         $payload = '<script>alert(1)</script>';

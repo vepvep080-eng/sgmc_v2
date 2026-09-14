@@ -12,7 +12,6 @@ class ServiceSeeder extends Seeder
         $services = [
             ['name' => 'Secrétariat Général', 'code' => 'SG'],
             ['name' => 'Ressources Humaines', 'code' => 'RH'],
-            ['name' => 'Service Technique', 'code' => 'ST'],
             ['name' => 'Urbanisme', 'code' => 'URB'],
             ['name' => 'Comptabilité', 'code' => 'COMPTA'],
             ['name' => 'Finances', 'code' => 'FIN'],

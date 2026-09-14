@@ -21,6 +21,26 @@ class CourrierNotificationService
             return;
         }
 
+        // Étape 1 (vers département) : notifier le chef du département ciblé.
+        if ($routing->service_destination_id === null && $routing->department_id !== null) {
+            $managerId = \App\Models\Department::whereKey($routing->department_id)->value('manager_id');
+
+            $recipients = User::query()
+                ->where('is_active', true)
+                ->when($managerId, fn ($q) => $q->whereKey($managerId), fn ($q) => $q->whereRaw('1 = 0'))
+                ->get();
+
+            $this->send(
+                $recipients,
+                $courrier,
+                'routed',
+                'Nouveau courrier reçu',
+                "Le courrier {$courrier->numero} a été envoyé à votre département."
+            );
+
+            return;
+        }
+
         $recipients = User::query()
             ->where('is_active', true)
             ->where(function ($query) use ($routing) {

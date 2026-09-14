@@ -51,7 +51,7 @@ class ScanJobTest extends TestCase
     private function courrierFor(string $roleSlug): array
     {
         $service = Service::create(['name' => 'Service', 'code' => uniqid('S')]);
-        $role = Role::create(['name' => $roleSlug, 'slug' => $roleSlug]);
+        $role = Role::firstOrCreate(['slug' => $roleSlug], ['name' => $roleSlug]);
         $user = User::factory()->create(['role_id' => $role->id, 'service_id' => $service->id]);
         $courrier = Courrier::create(['objet' => 'Objet', 'expediteur' => 'Expéditeur', 'date_reception' => now()->toDateString(), 'priorite' => 'normale', 'type' => 'Administratif', 'service_id' => $service->id, 'user_id' => $user->id, 'statut' => 'nouveau']);
         return [$user, $courrier];

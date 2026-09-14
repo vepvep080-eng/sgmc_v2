@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -50,6 +52,44 @@ class User extends Authenticatable
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);
+    }
+
+    /**
+     * Département de l'utilisateur via son service (user -> service -> department).
+     * Ex. : le département d'un chef_service = celui de son service.
+     */
+    public function department(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Department::class,
+            Service::class,
+            'id',            // FK intermédiaire : services.id ...
+            'id',            // FK finale : departments.id ...
+            'service_id',    // clé locale sur users
+            'department_id'  // clé locale sur services
+        );
+    }
+
+    /**
+     * Département(s) piloté(s) par cet utilisateur en tant que chef de département
+     * (departments.manager_id = users.id). Un chef ne pilote qu'un seul
+     * département dans l'organigramme Jerada, mais on expose une collection.
+     */
+    public function managedDepartments(): HasMany
+    {
+        return $this->hasMany(Department::class, 'manager_id');
+    }
+
+    /**
+     * Le département piloté (raccourci pratique, null si aucun).
+     */
+    public function managedDepartment(): ?Department
+    {
+        if (! $this->relationLoaded('managedDepartments')) {
+            $this->setRelation('managedDepartments', $this->managedDepartments()->get());
+        }
+
+        return $this->getRelation('managedDepartments')->first();
     }
 
     public function hasRole(string ...$slugs): bool

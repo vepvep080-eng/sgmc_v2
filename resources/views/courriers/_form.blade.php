@@ -12,11 +12,13 @@
 
         {{-- Section 1 — Informations --}}
         <section class="rounded-xl bg-white/60 dark:bg-white/[0.04] border border-white/70 dark:border-white/10 shadow-glass px-5 py-5">
+            {{-- Section 1 — Informations (maquette: subject + sender + ref + type) --}}
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 shrink-0 rounded-full bg-primary-100/80 dark:bg-white/10 flex items-center justify-center text-primary-700 dark:text-primary-100">
-                    <x-icon name="paperclip" class="w-4 h-4" />
+                <div class="w-9 h-9 shrink-0 rounded-xl bg-primary text-white flex items-center justify-center text-sm font-bold">
+                    1
                 </div>
-                <h3 class="font-display text-sm font-semibold text-primary-800 dark:text-primary-50">1. {{ __('app.form_section_1') }}</h3>
+                <h3 class="font-display text-sm font-semibold text-primary-800 dark:text-primary-50">{{ __('app.form_section_1') }}</h3>
+                <span class="ms-auto text-[11px] font-medium text-primary-700/55 dark:text-primary-100/45">(<span class="text-red-500 font-bold">*</span>)</span>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
@@ -90,10 +92,10 @@
         {{-- Section 2 — Classification --}}
         <section class="rounded-xl bg-white/60 dark:bg-white/[0.04] border border-white/70 dark:border-white/10 shadow-glass px-5 py-5">
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 shrink-0 rounded-full bg-primary-100/80 dark:bg-white/10 flex items-center justify-center text-primary-700 dark:text-primary-100">
-                    <x-icon name="inbox" class="w-4 h-4" />
+                <div class="w-9 h-9 shrink-0 rounded-xl bg-primary text-white flex items-center justify-center text-sm font-bold">
+                    2
                 </div>
-                <h3 class="font-display text-sm font-semibold text-primary-800 dark:text-primary-50">2. {{ __('app.form_section_2') }}</h3>
+                <h3 class="font-display text-sm font-semibold text-primary-800 dark:text-primary-50">{{ __('app.form_section_2') }}</h3>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
@@ -128,13 +130,13 @@
                     @error('priorite') <p class="mt-1.5 text-xs text-red-600 dark:text-red-400">{{ $message }}</p> @enderror
                 </div>
 
-                {{-- Service destinataire --}}
+                {{-- Service destinataire (optionnel : le routage hiérarchique se fait depuis la fiche) --}}
                 <div class="sm:col-span-2">
                     <label for="service_id" class="block text-xs font-medium tracking-wide text-primary-700/75 dark:text-primary-100/70 mb-1.5">
-                        {{ __('app.recipient_service') }} <span class="text-red-500">*</span>
+                        {{ __('app.recipient_service') }} <span class="text-xs font-normal opacity-60">(optionnel — envoi vers les départements depuis la fiche)</span>
                     </label>
                     <select
-                        id="service_id" name="service_id" required
+                        id="service_id" name="service_id"
                         class="w-full rounded-xl bg-primary-100/50 dark:bg-white/[0.06] border border-primary-500/10 dark:border-white/10 px-4 py-3 text-sm text-primary-900 dark:text-primary-50 outline-none transition-all duration-300 ease-fluent focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 @error('service_id') border-red-400 @enderror"
                     >
                         <option value="">{{ __('app.select_service_placeholder') }}</option>
@@ -152,10 +154,10 @@
         {{-- Section 3 — Description --}}
         <section class="rounded-xl bg-white/60 dark:bg-white/[0.04] border border-white/70 dark:border-white/10 shadow-glass px-5 py-5">
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 shrink-0 rounded-full bg-primary-100/80 dark:bg-white/10 flex items-center justify-center text-primary-700 dark:text-primary-100">
-                    <x-icon name="pencil" class="w-4 h-4" />
+                <div class="w-9 h-9 shrink-0 rounded-xl bg-primary text-white flex items-center justify-center text-sm font-bold">
+                    3
                 </div>
-                <h3 class="font-display text-sm font-semibold text-primary-800 dark:text-primary-50">3. {{ __('app.form_section_3') }}</h3>
+                <h3 class="font-display text-sm font-semibold text-primary-800 dark:text-primary-50">{{ __('app.form_section_3') }}</h3>
             </div>
 
             <div class="mt-4">
@@ -179,10 +181,11 @@
     <div class="lg:col-span-1">
         <section class="rounded-xl bg-white/60 dark:bg-white/[0.04] border border-white/70 dark:border-white/10 shadow-glass px-5 py-5">
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 shrink-0 rounded-full bg-primary-100/80 dark:bg-white/10 flex items-center justify-center text-primary-700 dark:text-primary-100">
-                    <x-icon name="plus" class="w-4 h-4" />
+                <div class="w-9 h-9 shrink-0 rounded-xl bg-primary text-white flex items-center justify-center text-sm font-bold">
+                    4
                 </div>
                 <h3 class="font-display text-sm font-semibold text-primary-800 dark:text-primary-50">{{ __('app.form_section_4') }}</h3>
+                <span class="ms-auto tabular-nums text-[11px] font-medium text-primary-700/55 dark:text-primary-100/45">Max 10MB</span>
             </div>
 
             <div class="mt-4">

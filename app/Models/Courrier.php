@@ -25,9 +25,12 @@ class Courrier extends Model
 
     /**
      * Human-readable labels for the `statut` column.
+     * 'en_attente_de_dispatch' = envoyé aux départements, en attente du
+     * dispatch du chef de département vers ses services (traçabilité).
      */
     public const STATUTS = [
         'nouveau' => 'Nouveau',
+        'en_attente_de_dispatch' => 'En attente de dispatch',
         'en_cours' => 'En cours',
         'traite' => 'Traité',
         'archive' => 'Archivé',
@@ -50,6 +53,7 @@ class Courrier extends Model
         'reference',
         'priorite',
         'type',
+        'department_id',
         'service_id',
         'section_id',
         'assigned_user_id',
@@ -117,6 +121,16 @@ class Courrier extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    /**
+     * Département courant du courrier (Étape 1 : renseigné dès l'envoi BO/Admin
+     * vers les départements ; Étape 2 : le dispatch ne change pas forcément
+     * ce champ si multi-départements — voir routings pour le détail).
+     */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
     }
 
     public function section(): BelongsTo { return $this->belongsTo(Section::class); }
@@ -260,10 +274,13 @@ class Courrier extends Model
     }
 
     /**
-     * Data isolation between services: admins, Bureau d'Ordre users and
-     * read-only users see every courrier; a chef_service only sees
-     * courriers assigned to their own service. Users without a recognised
-     * role are intentionally given an empty result set.
+     * Data isolation hiérarchique :
+     * - admin / BO / lecture seule : tout ;
+     * - chef_departement : courriers routés vers SON département
+     *   (routings.department_id) + déjà rattachés à ses services ;
+     * - chef_service : courriers de SON service (+ routés vers lui, même
+     *   si courrier.service_id pas encore aligné — via routings) ;
+     * - autres : vide (sécurité par défaut).
      */
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
@@ -272,7 +289,14 @@ class Courrier extends Model
         }
 
         if ($user->hasRole(Role::CHEF_SERVICE) && $user->service_id !== null) {
-            return $query->where('service_id', $user->service_id);
+            $serviceId = $user->service_id;
+
+            return $query->where(function ($q) use ($serviceId) {
+                $q->where('courriers.service_id', $serviceId)
+                    ->orWhereHas('routings', function ($r) use ($serviceId) {
+                        $r->where('service_destination_id', $serviceId);
+                    });
+            });
         }
 
         if ($user->hasRole(Role::CHEF_SECTION) && $user->section_id !== null) {
@@ -290,15 +314,12 @@ class Courrier extends Model
                 return $query->whereNull('courriers.id');
             }
 
-            $serviceIds = $department->services()->pluck('id');
+            $serviceIds = $department->services()->pluck('services.id');
 
             return $query->where(function ($q) use ($serviceIds, $department) {
-                // Cas A : déjà rattaché à un service de mon département
-                $q->whereIn('service_id', $serviceIds)
-                    // Cas B : en attente de sous-routage au niveau de mon département
-                    ->orWhereHas('currentRouting', function ($r) use ($department) {
-                        $r->where('department_id', $department->id)
-                          ->whereNull('service_destination_id');
+                $q->whereIn('courriers.service_id', $serviceIds->all())
+                    ->orWhereHas('routings', function ($r) use ($department) {
+                        $r->where('department_id', $department->id);
                     });
             });
         }

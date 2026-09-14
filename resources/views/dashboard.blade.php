@@ -70,26 +70,36 @@
         }
     @endphp
 
-    <div class="flex flex-wrap items-end justify-between gap-4 opacity-0 animate-fadeInUp" style="animation-delay: 0.05s;">
-        <div>
-            <h2 class="font-display font-semibold text-2xl text-primary-800 dark:text-primary-50">
-                {{ __('app.welcome', ['name' => Auth::user()->name]) }}
-            </h2>
-            <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/50">
-                {{ __('app.dashboard_summary') }}
-            </p>
-            <p class="mt-2 flex items-center gap-2 text-[11px] font-medium text-primary-700/55 dark:text-primary-100/45">
-                <span class="h-1.5 w-1.5 rounded-full bg-gold-500 animate-pulse" aria-hidden="true"></span>
-                {{ now()->locale(app()->getLocale())->translatedFormat('l d F Y') }}
-            </p>
+    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 bg-white/55 dark:bg-white/[0.05] backdrop-blur-2xl border border-white/70 dark:border-white/10 rounded-2xl shadow-glass-lg dark:shadow-glass-lg-dark p-6 opacity-0 animate-fadeInUp" style="animation-delay: 0.05s;">
+        <div class="flex items-start gap-4">
+            <div class="w-14 h-14 rounded-xl bg-primary-500 text-white flex items-center justify-center shadow-md shrink-0">
+                <x-icon name="building" class="w-7 h-7" />
+            </div>
+            <div class="flex flex-col">
+                <div class="flex flex-wrap items-center gap-2">
+                    <h2 class="font-display font-semibold text-xl text-primary-800 dark:text-primary-50">{{ __('app.dashboard') }}</h2>
+                    <span class="bg-primary-100 text-primary-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full">Bureau d'Ordre</span>
+                </div>
+                <p class="mt-1 text-sm text-primary-700/60 dark:text-primary-100/50">{{ __('app.dashboard_summary') }}</p>
+                <p class="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] font-medium text-primary-700/55 dark:text-primary-100/45">
+                    <span class="inline-flex items-center gap-1.5"><span class="h-1.5 w-1.5 rounded-full bg-primary-500 animate-pulse" aria-hidden="true"></span>{{ __('app.welcome', ['name' => Auth::user()->name]) }}</span>
+                    <span class="text-outline-variant">|</span>
+                    <span class="tabular-nums text-secondary-600">{{ now()->locale(app()->getLocale())->translatedFormat('l d F Y') }}</span>
+                </p>
+            </div>
         </div>
-
-        @can('create', \App\Models\Courrier::class)
-            <a href="{{ route('courriers.create') }}" class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_10px_24px_-8px_rgba(11,61,145,0.45)] transition-transform duration-200 ease-fluent hover:scale-[1.02]">
-                <x-icon name="plus-simple" class="w-4 h-4" />
-                {{ __('app.dashboard_add_mail') }}
+        <div class="flex flex-wrap items-center gap-2.5 w-full lg:w-auto justify-end">
+            <a href="{{ route('courriers.export.pdf', request()->query()) }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/60 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 text-sm font-semibold text-primary-700 dark:text-primary-100 shadow-glass hover:bg-white/80 transition-all">
+                <x-icon name="download" class="w-4 h-4 text-secondary-600" />
+                {{ __('app.export_pdf') }}
             </a>
-        @endcan
+            @can('create', \App\Models\Courrier::class)
+                <a href="{{ route('courriers.create') }}" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-600 text-white text-sm font-semibold shadow-md transition-all">
+                    <x-icon name="plus-simple" class="w-4 h-4" />
+                    {{ __('app.dashboard_add_mail') }}
+                </a>
+            @endcan
+        </div>
     </div>
 
     <div class="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 opacity-0 animate-fadeInUp" style="animation-delay: 0.1s;">
@@ -228,12 +238,19 @@
         <div class="relative overflow-hidden rounded-[24px] border border-white/70 bg-white/55 shadow-glass-lg backdrop-blur-2xl dark:border-white/10 dark:bg-white/[0.05] dark:shadow-glass-lg-dark">
             <div class="absolute left-8 top-0 h-[2px] w-16 rounded-full bg-gradient-to-r from-transparent via-gold-500 to-transparent"></div>
 
-            <div class="flex items-center justify-between border-b border-white/50 px-6 py-5 dark:border-white/10 sm:px-8">
-                <h3 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">
-                    {{ __('app.recent_mail_section_title') }}
-                </h3>
+            <div class="flex flex-col sm:flex-row sm:items-center gap-3 border-b border-white/50 px-6 py-5 dark:border-white/10 sm:px-8">
+                <div class="flex-1">
+                    <h3 class="font-display text-lg font-semibold text-primary-800 dark:text-primary-50">
+                        {{ __('app.recent_mail_section_title') }}
+                    </h3>
+                    <p class="mt-0.5 text-xs text-primary-700/55 dark:text-primary-100/45">{{ __('app.recent_mail') }}</p>
+                </div>
+                <form method="GET" action="{{ route('courriers.index') }}" class="relative w-full sm:w-64">
+                    <span class="pointer-events-none absolute inset-y-0 start-3 flex items-center text-outline" aria-hidden="true"><x-icon name="search" class="w-4 h-4" /></span>
+                    <input type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('app.search') }}..." class="w-full h-10 rounded-xl bg-white/70 dark:bg-white/[0.06] border border-white/70 dark:border-white/10 ps-9 pe-3 text-sm outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/10" />
+                </form>
 
-                <a href="{{ route('courriers.index') }}" class="text-xs font-semibold tracking-wide text-primary-600 transition-colors duration-200 ease-fluent hover:text-gold-600 dark:text-primary-200 dark:hover:text-gold-400">
+                <a href="{{ route('courriers.index') }}" class="text-xs font-semibold tracking-wide text-primary-600 transition-colors duration-200 ease-fluent hover:text-gold-600 dark:text-primary-200 dark:hover:text-gold-400 shrink-0">
                     {{ __('app.view_all_arrow') }}
                 </a>
             </div>
